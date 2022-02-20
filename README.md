@@ -1,3 +1,3 @@
 # demo
 
-Quick resturant listing app, Spring Boot + Angular. WIP.
+Quick restaurant listing app, Spring Boot + Angular. WIP.
