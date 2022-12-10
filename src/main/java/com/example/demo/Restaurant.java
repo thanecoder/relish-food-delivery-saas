@@ -14,6 +14,7 @@ public class Restaurant {
 
     private String name;
     private String address;
+    private String cuisineType;
 
     public Long getId() {
         return id;
@@ -33,5 +34,13 @@ public class Restaurant {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getCuisineType() {
+        return cuisineType;
+    }
+
+    public void setCuisineType(String cuisineType) {
+        this.cuisineType = cuisineType;
     }
 }
