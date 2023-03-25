@@ -17,7 +17,7 @@ public class RestaurantController {
     }
 
     @GetMapping
-    public List<Restaurant> all() {
+    public List<Restaurant> list() {
         return repository.findAll();
     }
 }
