@@ -1,12 +1,10 @@
 # Relish
 
-A small, single-tenant food delivery platform — Angular + Spring Boot, OTP-only login, fully containerized. Built for exhibition/demo purposes with real enterprise engineering discipline, not for production scale.
+Small food delivery app, Angular + Spring Boot, OTP login (no passwords). Built to run entirely in Docker, not meant for production scale, just a demo/exhibition project.
 
-See [`docs/architecture-and-roles.md`](docs/architecture-and-roles.md) for the full architecture, role model, and security design.
+## Requirements
 
-## Prerequisites
-
-**Docker only** — Docker Desktop, or Docker Engine + the Compose plugin. No local Node.js, Angular CLI, JDK, Maven, or PostgreSQL install is needed or expected; everything runs in containers.
+Just Docker (Desktop or Engine + compose plugin). No local Node, JDK, Maven or Postgres needed, everything builds and runs in containers.
 
 ## Quickstart
 
@@ -17,21 +15,17 @@ cp .env.example .env
 docker compose up
 ```
 
-- Frontend: http://localhost:4200
-- Backend API: http://localhost:8080
+- Frontend: http://localhost:4201
+- Backend: http://localhost:8081
 
-Demo accounts and seed data will be documented here once seed data lands (see the project-phase tracker in the architecture doc).
+Seed data / demo accounts not set up yet, coming later.
 
-## Common commands
-
-Every command runs through Compose — never a bare `npm`, `ng`, or `mvn` on the host. See [`docs/architecture-and-roles.md#containerized-delivery--local-development`](docs/architecture-and-roles.md#containerized-delivery--local-development) for the full list, e.g.:
+## Tests
 
 ```bash
-docker compose exec backend ./mvnw test
-docker compose exec frontend npm test
-docker compose -f docker-compose.prod.yml up --build   # exhibition-ready build
+docker compose --profile test run --rm backend-test
 ```
 
-## Project status
+## Status
 
-Currently in the **Repo Scaffold & MVP Build** phase. See the architecture doc for the full roadmap and role model.
+Backend + frontend scaffolding is done (domain model, Docker infra, Material theme). Auth flow (OTP login) is next.

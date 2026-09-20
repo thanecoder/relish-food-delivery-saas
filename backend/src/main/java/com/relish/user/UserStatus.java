@@ -1,7 +1,7 @@
 package com.relish.user;
 
 public enum UserStatus {
-	/** Restaurant Admin / Delivery Partner accounts start here after applying, until a Platform Admin activates them. */
+	// restaurant admin / delivery partner accounts sit here until platform admin approves
 	PENDING,
 	ACTIVE,
 	SUSPENDED

@@ -11,7 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-/** Pure audit trail — the current state always lives on {@link Order#getStatus()}, never replayed from here. */
+// just an audit log, current status always lives on Order itself
 @Entity
 @Table(name = "order_status_events")
 public class OrderStatusEvent extends BaseEntity {

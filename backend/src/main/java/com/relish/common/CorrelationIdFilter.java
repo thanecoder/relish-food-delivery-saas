@@ -10,10 +10,7 @@ import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/**
- * Tags every request/response with a correlation id in both the response header and the log
- * MDC, so a failure seen in the browser network tab can be traced straight to a backend log line.
- */
+// adds a correlation id so we can trace a request from the browser network tab to the actual log line
 @Component
 class CorrelationIdFilter extends OncePerRequestFilter {
 

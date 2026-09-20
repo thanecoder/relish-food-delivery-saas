@@ -10,11 +10,11 @@ import java.time.Instant;
 @Table(name = "otp_challenges")
 public class OtpChallenge extends BaseEntity {
 
-	/** The email the code was requested for — not a FK, since a challenge may exist for an email with no User yet. */
+	// email the code was sent to, not a FK since the User might not exist yet
 	@Column(nullable = false)
 	private String identifier;
 
-	/** Salted hash of the 6-digit code — the plaintext code is never persisted. */
+	// hashed, we never store the actual code
 	@Column(name = "code_hash", nullable = false)
 	private String codeHash;
 

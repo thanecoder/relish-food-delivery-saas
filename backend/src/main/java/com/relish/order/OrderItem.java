@@ -25,7 +25,7 @@ public class OrderItem extends BaseEntity {
 	@Column(nullable = false)
 	private int quantity;
 
-	/** Price at the moment the order was placed — never re-read from the menu item afterward. */
+	// price when order was placed, doesnt change even if menu price changes later
 	@Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
 	private BigDecimal unitPrice;
 

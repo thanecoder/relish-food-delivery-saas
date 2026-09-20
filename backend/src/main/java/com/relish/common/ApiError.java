@@ -3,7 +3,6 @@ package com.relish.common;
 import java.time.Instant;
 import java.util.List;
 
-/** Uniform error shape returned by every endpoint, so the frontend has exactly one shape to render. */
 public record ApiError(Instant timestamp, int status, String error, String message, List<String> details) {
 
 	public static ApiError of(int status, String error, String message) {

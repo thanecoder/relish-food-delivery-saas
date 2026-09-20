@@ -4,7 +4,6 @@ import com.relish.user.User;
 import java.util.List;
 import java.util.UUID;
 
-/** The only way another package may read or write restaurant data — never through {@link RestaurantRepository} directly. */
 public interface RestaurantService {
 
 	Restaurant getById(UUID id);

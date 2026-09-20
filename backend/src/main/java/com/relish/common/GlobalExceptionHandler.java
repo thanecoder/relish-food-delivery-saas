@@ -29,7 +29,7 @@ class GlobalExceptionHandler {
 
 	@ExceptionHandler({ BadCredentialsException.class, AccessDeniedException.class })
 	ResponseEntity<ApiError> handleAuth(RuntimeException ex) {
-		return respond(HttpStatus.FORBIDDEN, "Not authorized to perform this action.");
+		return respond(HttpStatus.FORBIDDEN, "Your not authorized to do that.");
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)

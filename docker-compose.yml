@@ -49,9 +49,8 @@ services:
     ports:
       - "4201:80"
 
-  # Runs backend tests inside Docker, against the real `db` service.
-  # Never starts with a plain `docker compose up` - only via:
-  #   docker compose --profile test run --rm backend-test
+  # only runs with --profile test, wont start with normal docker compose up
+  # docker compose --profile test run --rm backend-test
   backend-test:
     profiles: ["test"]
     build:

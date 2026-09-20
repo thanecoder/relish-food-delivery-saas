@@ -8,13 +8,7 @@ import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 
-/**
- * Enforces the one rule that keeps this modular monolith from decaying into a tangle: a feature
- * package's persistence layer is its own private implementation detail. Every repository is
- * already package-private in code (the compiler enforces that); these rules exist so a future
- * regression — someone widening a repository's visibility, or a service reaching around another
- * module instead of through its interface — fails a test instead of quietly landing.
- */
+// keeps modules from reaching into each others repositories, catches it if someone forgets
 @AnalyzeClasses(packages = "com.relish", importOptions = ImportOption.DoNotIncludeTests.class)
 class ModuleBoundaryTest {
 

@@ -78,10 +78,7 @@ class DeliveryServiceImpl implements DeliveryService {
 		return assignment;
 	}
 
-	/**
-	 * Auto-assigns the least-busy active Delivery Partner when a restaurant marks an order
-	 * READY_FOR_PICKUP. There is no manual dispatcher UI (see the architecture doc's role model).
-	 */
+	// picks whichever active delivery partner has the fewest open deliveries, no dispatcher UI for now
 	@TransactionalEventListener
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void onOrderReadyForPickup(OrderReadyForPickupEvent event) {
