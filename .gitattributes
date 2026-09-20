@@ -1,0 +1,16 @@
+# Normalize everything to LF by default so shell scripts behave correctly when
+# executed inside the Linux containers, regardless of the host OS checkout.
+* text=auto eol=lf
+
+# Windows-only scripts stay CRLF.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Maven wrapper is invoked directly inside the backend container — must stay LF.
+mvnw text eol=lf
+mvnw.cmd text eol=crlf
+
+*.jar binary
+*.png binary
+*.jpg binary

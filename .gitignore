@@ -1,0 +1,26 @@
+# Local design/planning notes — not part of the tracked repo history
+docs/
+
+# Local dev tooling — not part of the tracked repo history
+scripts/
+
+# Environment
+.env
+
+# Node / Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+npm-debug.log*
+
+# Java / Maven
+backend/target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
