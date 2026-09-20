@@ -1,0 +1,39 @@
+package com.relish.common;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.UUID;
+import org.slf4j.MDC;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+/**
+ * Tags every request/response with a correlation id in both the response header and the log
+ * MDC, so a failure seen in the browser network tab can be traced straight to a backend log line.
+ */
+@Component
+class CorrelationIdFilter extends OncePerRequestFilter {
+
+	static final String HEADER = "X-Correlation-Id";
+	private static final String MDC_KEY = "correlationId";
+
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+			throws ServletException, IOException {
+		String correlationId = request.getHeader(HEADER);
+		if (correlationId == null || correlationId.isBlank()) {
+			correlationId = UUID.randomUUID().toString();
+		}
+		MDC.put(MDC_KEY, correlationId);
+		response.setHeader(HEADER, correlationId);
+		try {
+			chain.doFilter(request, response);
+		} finally {
+			MDC.remove(MDC_KEY);
+		}
+	}
+
+}

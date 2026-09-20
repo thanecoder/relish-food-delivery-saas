@@ -16,10 +16,10 @@ npm-debug.log*
 # Java / Maven
 backend/target/
 
-# IDE
+# IDE (root only - frontend/.vscode is part of the Angular scaffold, keep that one)
 .idea/
 *.iml
-.vscode/
+/.vscode/
 
 # OS
 .DS_Store
