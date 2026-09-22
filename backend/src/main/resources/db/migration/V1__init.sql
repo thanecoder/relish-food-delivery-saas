@@ -1,5 +1,4 @@
--- Baseline schema for all 11 entities in the architecture doc's Core Data Model.
--- Once this has run anywhere real, it is never edited — every later change is a new V2__, V3__... file.
+-- initial schema, dont edit this once its actually run somewhere, add a new migration instead
 
 create table users (
     id              uuid primary key,
@@ -8,6 +7,7 @@ create table users (
     name            varchar(255) not null,
     role            varchar(32) not null check (role in ('CUSTOMER', 'RESTAURANT_ADMIN', 'DELIVERY_PARTNER', 'PLATFORM_ADMIN')),
     status          varchar(16) not null check (status in ('PENDING', 'ACTIVE', 'SUSPENDED')),
+    terms_accepted_at timestamptz not null,
     created_at      timestamptz not null,
     updated_at      timestamptz not null
 );

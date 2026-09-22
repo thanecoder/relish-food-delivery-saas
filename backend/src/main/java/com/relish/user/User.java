@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
+import java.time.Instant;
 
 @Entity
 @Table(name = "users")
@@ -27,14 +28,19 @@ public class User extends BaseEntity {
 	@Column(nullable = false, length = 16)
 	private UserStatus status;
 
+	// account only gets created once this is set - see OtpController's consent gate
+	@Column(name = "terms_accepted_at", nullable = false)
+	private Instant termsAcceptedAt;
+
 	protected User() {
 	}
 
-	public User(String email, String name, Role role, UserStatus status) {
+	public User(String email, String name, Role role, UserStatus status, Instant termsAcceptedAt) {
 		this.email = email;
 		this.name = name;
 		this.role = role;
 		this.status = status;
+		this.termsAcceptedAt = termsAcceptedAt;
 	}
 
 	public String getEmail() {
@@ -67,6 +73,10 @@ public class User extends BaseEntity {
 
 	public void setStatus(UserStatus status) {
 		this.status = status;
+	}
+
+	public Instant getTermsAcceptedAt() {
+		return termsAcceptedAt;
 	}
 
 }

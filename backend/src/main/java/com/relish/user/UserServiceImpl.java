@@ -1,6 +1,7 @@
 package com.relish.user;
 
 import com.relish.common.NotFoundException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,10 +32,8 @@ class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User findOrCreateCustomer(String email) {
-		return userRepository.findByEmail(email)
-			.orElseGet(() -> userRepository.save(
-				new User(email, email, Role.CUSTOMER, UserStatus.ACTIVE)));
+	public User createCustomer(String email, Instant termsAcceptedAt) {
+		return userRepository.save(new User(email, email, Role.CUSTOMER, UserStatus.ACTIVE, termsAcceptedAt));
 	}
 
 	@Override
