@@ -1,8 +1,7 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/auth/auth.guard';
 
-// Route guards (role-aware, per docs/architecture-and-roles.md §6) are wired in M4 alongside
-// the OTP auth flow. Each feature area is its own lazy-loaded chunk so, e.g., a customer's
-// bundle never pulls in the platform-admin screens.
+// each area lazy loads on its own so customers dont end up downloading the admin screens etc
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'auth' },
   {
@@ -10,20 +9,28 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/request-otp').then((m) => m.RequestOtp),
   },
   {
+    path: 'auth/verify',
+    loadComponent: () => import('./features/auth/verify-otp').then((m) => m.VerifyOtp),
+  },
+  {
     path: 'customer',
+    canActivate: [authGuard],
     loadComponent: () => import('./features/customer/customer-home').then((m) => m.CustomerHome),
   },
   {
     path: 'restaurant-admin',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/restaurant-admin/restaurant-admin-home').then((m) => m.RestaurantAdminHome),
   },
   {
     path: 'delivery',
+    canActivate: [authGuard],
     loadComponent: () => import('./features/delivery/delivery-home').then((m) => m.DeliveryHome),
   },
   {
     path: 'admin',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/platform-admin/platform-admin-home').then((m) => m.PlatformAdminHome),
   },
