@@ -24,11 +24,10 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Transactional
 class OrderServiceImpl implements OrderService {
 
-	/** A flat fee keeps the demo simple — see the architecture doc's Open Decisions for why. */
+	// flat fee for now, keeps things simple
 	private static final BigDecimal DELIVERY_FEE = new BigDecimal("2.99");
 
-	/** Transitions a Restaurant Admin may trigger directly. OUT_FOR_DELIVERY/DELIVERED are driven
-	 *  only by the delivery package's events (see {@link #onDeliveryStatusChanged}), never by this map. */
+	// OUT_FOR_DELIVERY/DELIVERED arent here on purpose, those only happen thru the delivery events below
 	private static final Map<OrderStatus, Set<OrderStatus>> ADMIN_TRANSITIONS = Map.of(
 		OrderStatus.PLACED, Set.of(OrderStatus.ACCEPTED, OrderStatus.REJECTED),
 		OrderStatus.ACCEPTED, Set.of(OrderStatus.PREPARING, OrderStatus.CANCELLED),
@@ -53,8 +52,14 @@ class OrderServiceImpl implements OrderService {
 	@Override
 	@Transactional(readOnly = true)
 	public Order getById(UUID id) {
-		return orderRepository.findById(id)
+		return orderRepository.findByIdFetchRestaurant(id)
 			.orElseThrow(() -> new NotFoundException("No order with id " + id));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<OrderItem> listItems(UUID orderId) {
+		return orderItemRepository.findByOrderId(orderId);
 	}
 
 	@Override
