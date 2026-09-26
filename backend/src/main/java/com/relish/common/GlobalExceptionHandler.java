@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -44,6 +45,13 @@ class GlobalExceptionHandler {
 	@ExceptionHandler(ConstraintViolationException.class)
 	ResponseEntity<ApiError> handleConstraintViolation(ConstraintViolationException ex) {
 		return respond(HttpStatus.BAD_REQUEST, ex.getMessage());
+	}
+
+	// missing/wrong-typed field, truncated body, malformed json - whatever it is, its the
+	// client's fault, not ours, so this shouldnt fall through to the 500 catch-all below
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	ResponseEntity<ApiError> handleUnreadableBody(HttpMessageNotReadableException ex) {
+		return respond(HttpStatus.BAD_REQUEST, "Request body is missing or malformed.");
 	}
 
 	@ExceptionHandler(Exception.class)
