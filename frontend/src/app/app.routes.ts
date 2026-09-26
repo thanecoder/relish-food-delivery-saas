@@ -15,7 +15,27 @@ export const routes: Routes = [
   {
     path: 'customer',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/customer/customer-home').then((m) => m.CustomerHome),
+    loadComponent: () => import('./features/customer/restaurant-list').then((m) => m.RestaurantList),
+  },
+  {
+    path: 'customer/restaurants/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/customer/restaurant-detail').then((m) => m.RestaurantDetail),
+  },
+  {
+    path: 'customer/checkout',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/customer/checkout').then((m) => m.Checkout),
+  },
+  {
+    path: 'customer/orders',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/customer/order-history').then((m) => m.OrderHistory),
+  },
+  {
+    path: 'customer/orders/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/customer/order-detail').then((m) => m.OrderDetail),
   },
   {
     path: 'restaurant-admin',
