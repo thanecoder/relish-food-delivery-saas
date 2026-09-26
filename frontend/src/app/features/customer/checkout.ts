@@ -32,6 +32,10 @@ import { CustomerHeader } from './customer-header';
     } @else {
       <div class="layout">
         <div class="main-col">
+          <button mat-button class="back" (click)="backToMenu()">
+            <mat-icon>arrow_back</mat-icon> Back to menu
+          </button>
+
           <h1>Checkout</h1>
           <p class="restaurant-name">Order from {{ cart.restaurantName() }}</p>
 
@@ -145,6 +149,10 @@ import { CustomerHeader } from './customer-header';
     .main-col {
       flex: 1;
       min-width: 0;
+    }
+    .back {
+      margin: 0 0 8px -8px;
+      color: var(--mat-sys-on-surface-variant);
     }
     h1 {
       margin: 0 0 4px;
@@ -363,5 +371,14 @@ export class Checkout implements OnInit {
 
   browse() {
     this.router.navigate(['/customer']);
+  }
+
+  backToMenu() {
+    const restaurantId = this.cart.restaurantId();
+    if (restaurantId) {
+      this.router.navigate(['/customer/restaurants', restaurantId]);
+    } else {
+      this.browse();
+    }
   }
 }
