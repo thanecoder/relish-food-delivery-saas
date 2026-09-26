@@ -53,7 +53,7 @@ const BOX_COUNT = 6;
           mat-flat-button
           color="primary"
           class="submit"
-          [disabled]="!codeComplete() || !acceptedTerms.value || loading()"
+          [disabled]="!codeComplete() || loading()"
           (click)="submit()"
         >
           @if (loading()) {
@@ -227,7 +227,7 @@ export class VerifyOtp {
   }
 
   async submit() {
-    if (!this.codeComplete() || !this.acceptedTerms.value || this.loading()) {
+    if (!this.codeComplete() || this.loading()) {
       return;
     }
     this.loading.set(true);
@@ -235,8 +235,9 @@ export class VerifyOtp {
     try {
       const user = await this.auth.verifyOtp(this.email, this.code(), this.acceptedTerms.value);
       this.router.navigate([ROLE_HOME[user.role] ?? '/customer']);
-    } catch {
-      this.errorMsg.set("That code didn't work, double check it or request a new one.");
+    } catch (err: unknown) {
+      const backendMessage = (err as { error?: { message?: string } })?.error?.message;
+      this.errorMsg.set(backendMessage ?? "That code didn't work, double check it or request a new one.");
       this.digits.set(Array(BOX_COUNT).fill(''));
       this.focusBox(0);
     } finally {
