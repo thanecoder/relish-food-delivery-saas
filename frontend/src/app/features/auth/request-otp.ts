@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,6 +12,7 @@ import { AuthService } from '../../core/auth/auth.service';
   selector: 'app-request-otp',
   imports: [
     ReactiveFormsModule,
+    RouterLink,
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
@@ -49,6 +50,10 @@ import { AuthService } from '../../core/auth/auth.service';
             Send code
           }
         </button>
+
+        <p class="legal">
+          By continuing you agree to our <a routerLink="/terms">Terms &amp; Conditions</a>.
+        </p>
       </mat-card>
     </div>
   `,
@@ -88,6 +93,15 @@ import { AuthService } from '../../core/auth/auth.service';
       color: var(--mat-sys-error);
       font-size: 0.85rem;
       margin: 0 0 4px;
+    }
+    .legal {
+      margin: 14px 0 0;
+      font-size: 0.78rem;
+      color: var(--mat-sys-on-surface-variant);
+      text-align: center;
+    }
+    .legal a {
+      color: var(--mat-sys-primary);
     }
   `,
 })

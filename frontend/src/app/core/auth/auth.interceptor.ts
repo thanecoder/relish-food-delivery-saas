@@ -3,11 +3,19 @@ import { inject } from '@angular/core';
 import { catchError, from, switchMap, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 
+// /me is the one auth endpoint that actually wants the bearer token. The rest either carry their
+// own credential (the refresh cookie, a registration token in the body) or need none at all, and
+// sending a stale access token to them just gets the request bounced by the resource server.
+function needsBearer(url: string): boolean {
+  return !url.includes('/api/v1/auth/') || url.includes('/api/v1/auth/me');
+}
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const token = auth.getToken();
 
-  const authedReq = token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
+  const authedReq =
+    token && needsBearer(req.url) ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
 
   return next(authedReq).pipe(
     catchError((err) => {

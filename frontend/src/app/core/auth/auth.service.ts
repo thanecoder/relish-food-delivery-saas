@@ -6,6 +6,7 @@ export interface AuthUser {
   email: string;
   name: string;
   role: string;
+  status: string;
 }
 
 interface AuthResponse {
@@ -14,7 +15,19 @@ interface AuthResponse {
   email: string;
   name: string;
   role: string;
+  status: string;
 }
+
+interface OtpVerifyResponse {
+  outcome: 'SESSION' | 'REGISTRATION_REQUIRED';
+  session: AuthResponse | null;
+  registrationToken: string | null;
+  expiresIn: number;
+}
+
+export type VerifyOutcome =
+  | { kind: 'session'; user: AuthUser }
+  | { kind: 'registrationRequired'; registrationToken: string; expiresIn: number };
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -32,9 +45,23 @@ export class AuthService {
     return this.http.post<void>('/api/v1/auth/otp/request', { email });
   }
 
-  async verifyOtp(email: string, code: string, acceptedTerms: boolean): Promise<AuthUser> {
+  async verifyOtp(email: string, code: string): Promise<VerifyOutcome> {
     const res = await firstValueFrom(
-      this.http.post<AuthResponse>('/api/v1/auth/otp/verify', { email, code, acceptedTerms }),
+      this.http.post<OtpVerifyResponse>('/api/v1/auth/otp/verify', { email, code }),
+    );
+    if (res.outcome === 'SESSION' && res.session) {
+      return { kind: 'session', user: this.applySession(res.session) };
+    }
+    return {
+      kind: 'registrationRequired',
+      registrationToken: res.registrationToken!,
+      expiresIn: res.expiresIn,
+    };
+  }
+
+  async register(registrationToken: string): Promise<AuthUser> {
+    const res = await firstValueFrom(
+      this.http.post<AuthResponse>('/api/v1/auth/register', { registrationToken, acceptedTerms: true }),
     );
     return this.applySession(res);
   }
@@ -44,15 +71,30 @@ export class AuthService {
     return this.applySession(res);
   }
 
+  /**
+   * The access token only lives in memory, so a reload starts with nothing. The refresh cookie
+   * usually outlives it by days - this gives it one chance to hand the session back.
+   */
+  async restoreSession(): Promise<void> {
+    try {
+      await this.refresh();
+    } catch {
+      // no cookie, or its past it. Either way theyre just logged out.
+    }
+  }
+
   async logout() {
-    await firstValueFrom(this.http.post('/api/v1/auth/logout', {}));
-    this.accessToken.set(null);
-    this.user.set(null);
+    try {
+      await firstValueFrom(this.http.post('/api/v1/auth/logout', {}));
+    } finally {
+      this.accessToken.set(null);
+      this.user.set(null);
+    }
   }
 
   private applySession(res: AuthResponse): AuthUser {
     this.accessToken.set(res.accessToken);
-    const user = { email: res.email, name: res.name, role: res.role };
+    const user = { email: res.email, name: res.name, role: res.role, status: res.status };
     this.user.set(user);
     return user;
   }

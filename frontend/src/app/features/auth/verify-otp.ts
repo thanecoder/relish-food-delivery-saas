@@ -1,24 +1,18 @@
-import { Component, ElementRef, computed, signal, viewChildren } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Component, ElementRef, OnDestroy, computed, signal, viewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../core/auth/auth.service';
-
-const ROLE_HOME: Record<string, string> = {
-  CUSTOMER: '/customer',
-  RESTAURANT_ADMIN: '/restaurant-admin',
-  DELIVERY_PARTNER: '/delivery',
-  PLATFORM_ADMIN: '/admin',
-};
+import { RegistrationFlowService } from '../../core/auth/registration-flow.service';
+import { homeFor } from '../../core/auth/role-home';
 
 const BOX_COUNT = 6;
+const RESEND_COOLDOWN_SECONDS = 30;
 
 @Component({
   selector: 'app-verify-otp',
-  imports: [ReactiveFormsModule, MatButtonModule, MatCardModule, MatCheckboxModule, MatProgressSpinnerModule],
+  imports: [MatButtonModule, MatCardModule, MatProgressSpinnerModule],
   template: `
     <div class="wrap">
       <mat-card class="card">
@@ -41,12 +35,11 @@ const BOX_COUNT = 6;
           }
         </div>
 
-        <mat-checkbox [formControl]="acceptedTerms" class="terms">
-          I agree to Relish's Terms &amp; Conditions
-        </mat-checkbox>
-
         @if (errorMsg()) {
           <p class="error">{{ errorMsg() }}</p>
+        }
+        @if (noticeMsg()) {
+          <p class="notice">{{ noticeMsg() }}</p>
         }
 
         <button
@@ -60,6 +53,16 @@ const BOX_COUNT = 6;
             <mat-spinner diameter="20"></mat-spinner>
           } @else {
             Verify
+          }
+        </button>
+
+        <button mat-button class="resend" [disabled]="cooldown() > 0 || resending()" (click)="resend()">
+          @if (cooldown() > 0) {
+            Resend code in {{ cooldown() }}s
+          } @else if (resending()) {
+            Sending...
+          } @else {
+            Didn't get it? Resend code
           }
         </button>
 
@@ -125,25 +128,31 @@ const BOX_COUNT = 6;
       box-shadow: 0 0 0 3px color-mix(in srgb, var(--mat-sys-primary) 20%, transparent);
     }
 
-    .terms {
-      font-size: 0.85rem;
-      margin: 4px 0 4px;
-    }
     .submit {
       margin-top: 8px;
       height: 44px;
     }
+    .resend,
     .back {
       margin-top: 4px;
+      font-size: 0.85rem;
+    }
+    .back {
+      color: var(--mat-sys-on-surface-variant);
     }
     .error {
       color: var(--mat-sys-error);
       font-size: 0.85rem;
       margin: 0 0 4px;
     }
+    .notice {
+      color: var(--mat-sys-on-surface-variant);
+      font-size: 0.85rem;
+      margin: 0 0 4px;
+    }
   `,
 })
-export class VerifyOtp {
+export class VerifyOtp implements OnDestroy {
   email: string;
   boxIndexes = Array.from({ length: BOX_COUNT }, (_, i) => i);
   digits = signal<string[]>(Array(BOX_COUNT).fill(''));
@@ -151,19 +160,30 @@ export class VerifyOtp {
   code = computed(() => this.digits().join(''));
   boxes = viewChildren<ElementRef<HTMLInputElement>>('box');
 
-  acceptedTerms = new FormControl(false, { nonNullable: true });
   loading = signal(false);
+  resending = signal(false);
+  cooldown = signal(RESEND_COOLDOWN_SECONDS);
   errorMsg = signal<string | null>(null);
+  noticeMsg = signal<string | null>(null);
+
+  private ticker?: ReturnType<typeof setInterval>;
 
   constructor(
     private auth: AuthService,
+    private registration: RegistrationFlowService,
     private router: Router,
     route: ActivatedRoute,
   ) {
     this.email = route.snapshot.queryParamMap.get('email') ?? '';
     if (!this.email) {
       this.router.navigate(['/auth']);
+      return;
     }
+    this.startCooldown(RESEND_COOLDOWN_SECONDS);
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.ticker);
   }
 
   onInput(index: number, event: Event) {
@@ -232,17 +252,65 @@ export class VerifyOtp {
     }
     this.loading.set(true);
     this.errorMsg.set(null);
+    this.noticeMsg.set(null);
     try {
-      const user = await this.auth.verifyOtp(this.email, this.code(), this.acceptedTerms.value);
-      this.router.navigate([ROLE_HOME[user.role] ?? '/customer']);
+      const outcome = await this.auth.verifyOtp(this.email, this.code());
+      if (outcome.kind === 'session') {
+        const user = outcome.user;
+        this.router.navigate([user.status === 'ACTIVE' ? homeFor(user.role) : '/pending']);
+      } else {
+        // no account on this email yet - consent comes next, and only then does one get made
+        this.registration.start(outcome.registrationToken, this.email, outcome.expiresIn);
+        this.router.navigate(['/auth/terms']);
+      }
     } catch (err: unknown) {
-      const backendMessage = (err as { error?: { message?: string } })?.error?.message;
-      this.errorMsg.set(backendMessage ?? "That code didn't work, double check it or request a new one.");
+      const message = (err as { error?: { message?: string } })?.error?.message;
+      this.errorMsg.set(message ?? "That code didn't work, double check it or request a new one.");
       this.digits.set(Array(BOX_COUNT).fill(''));
       this.focusBox(0);
-    } finally {
       this.loading.set(false);
     }
+  }
+
+  resend() {
+    if (this.cooldown() > 0 || this.resending()) {
+      return;
+    }
+    this.resending.set(true);
+    this.errorMsg.set(null);
+    this.noticeMsg.set(null);
+    this.auth.requestOtp(this.email).subscribe({
+      next: () => {
+        this.resending.set(false);
+        this.noticeMsg.set('Sent a new code. The old one no longer works.');
+        this.digits.set(Array(BOX_COUNT).fill(''));
+        this.focusBox(0);
+        this.startCooldown(RESEND_COOLDOWN_SECONDS);
+      },
+      error: (err) => {
+        this.resending.set(false);
+        // the server tells us how long its locked us out for, so wait that out rather than the usual 30s
+        const retryAfter = Number(err?.headers?.get?.('Retry-After'));
+        if (err?.status === 429) {
+          this.errorMsg.set(err?.error?.message ?? 'Too many code requests, please wait a bit.');
+          this.startCooldown(Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter : 60);
+        } else {
+          this.errorMsg.set('Could not send a new code, try again in a bit.');
+        }
+      },
+    });
+  }
+
+  private startCooldown(seconds: number) {
+    clearInterval(this.ticker);
+    this.cooldown.set(seconds);
+    this.ticker = setInterval(() => {
+      const left = this.cooldown() - 1;
+      this.cooldown.set(left);
+      if (left <= 0) {
+        clearInterval(this.ticker);
+      }
+    }, 1000);
   }
 
   backToRequest() {
