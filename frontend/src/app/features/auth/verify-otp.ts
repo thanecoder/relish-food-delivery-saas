@@ -1,61 +1,61 @@
 import { Component, ElementRef, OnDestroy, computed, signal, viewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../core/auth/auth.service';
 import { RegistrationFlowService } from '../../core/auth/registration-flow.service';
 import { homeFor } from '../../core/auth/role-home';
+import { AuthLayout } from './auth-layout';
 
 const BOX_COUNT = 6;
 const RESEND_COOLDOWN_SECONDS = 30;
 
 @Component({
   selector: 'app-verify-otp',
-  imports: [MatButtonModule, MatCardModule, MatProgressSpinnerModule],
+  imports: [MatButtonModule, MatProgressSpinnerModule, AuthLayout],
   template: `
-    <div class="wrap">
-      <mat-card class="card">
-        <h1>Enter your code</h1>
-        <p class="sub">We sent a 6-digit code to <strong>{{ email }}</strong></p>
+    <app-auth-layout>
+      <h1>Enter your code</h1>
+      <p class="sub">We sent a 6-digit code to <strong>{{ email }}</strong></p>
 
-        <div class="otp-boxes" (paste)="onPaste($event)">
-          @for (i of boxIndexes; track i) {
-            <input
-              #box
-              type="text"
-              inputmode="numeric"
-              autocomplete="one-time-code"
-              maxlength="1"
-              class="otp-box"
-              [value]="digits()[i]"
-              (input)="onInput(i, $event)"
-              (keydown)="onKeydown(i, $event)"
-            />
-          }
-        </div>
-
-        @if (errorMsg()) {
-          <p class="error">{{ errorMsg() }}</p>
+      <div class="otp-boxes" (paste)="onPaste($event)">
+        @for (i of boxIndexes; track i) {
+          <input
+            #box
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="1"
+            class="otp-box"
+            [value]="digits()[i]"
+            (input)="onInput(i, $event)"
+            (keydown)="onKeydown(i, $event)"
+          />
         }
-        @if (noticeMsg()) {
-          <p class="notice">{{ noticeMsg() }}</p>
+      </div>
+
+      @if (errorMsg()) {
+        <p class="error">{{ errorMsg() }}</p>
+      }
+      @if (noticeMsg()) {
+        <p class="notice">{{ noticeMsg() }}</p>
+      }
+
+      <button
+        mat-flat-button
+        color="primary"
+        class="submit"
+        [disabled]="!codeComplete() || loading()"
+        (click)="submit()"
+      >
+        @if (loading()) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          Verify
         }
+      </button>
 
-        <button
-          mat-flat-button
-          color="primary"
-          class="submit"
-          [disabled]="!codeComplete() || loading()"
-          (click)="submit()"
-        >
-          @if (loading()) {
-            <mat-spinner diameter="20"></mat-spinner>
-          } @else {
-            Verify
-          }
-        </button>
-
+      <div class="secondary">
         <button mat-button class="resend" [disabled]="cooldown() > 0 || resending()" (click)="resend()">
           @if (cooldown() > 0) {
             Resend code in {{ cooldown() }}s
@@ -67,44 +67,30 @@ const RESEND_COOLDOWN_SECONDS = 30;
         </button>
 
         <button mat-button class="back" (click)="backToRequest()">Use a different email</button>
-      </mat-card>
-    </div>
+      </div>
+    </app-auth-layout>
   `,
   styles: `
-    .wrap {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-    .card {
-      width: 100%;
-      max-width: 380px;
-      padding: 32px 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
     h1 {
-      margin: 0 0 4px;
-      font-size: 1.6rem;
+      margin: 0 0 6px;
+      font-size: 1.75rem;
     }
     .sub {
-      margin: 0 0 16px;
+      margin: 0 0 24px;
       color: var(--mat-sys-on-surface-variant);
-      font-size: 0.9rem;
+      font-size: 0.92rem;
     }
 
     .otp-boxes {
       display: flex;
-      justify-content: center;
       gap: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
     .otp-box {
-      width: 44px;
-      height: 54px;
+      flex: 1;
+      min-width: 0;
+      max-width: 56px;
+      height: 56px;
       border-radius: 10px;
       border: 1.5px solid var(--mat-sys-outline);
       background: var(--mat-sys-surface);
@@ -129,13 +115,22 @@ const RESEND_COOLDOWN_SECONDS = 30;
     }
 
     .submit {
-      margin-top: 8px;
-      height: 44px;
+      width: 100%;
+      height: 46px;
+      margin-top: 4px;
+    }
+    .secondary {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-top: 10px;
     }
     .resend,
     .back {
-      margin-top: 4px;
       font-size: 0.85rem;
+      padding-left: 0;
+      padding-right: 0;
+      min-width: 0;
     }
     .back {
       color: var(--mat-sys-on-surface-variant);
