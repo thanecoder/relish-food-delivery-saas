@@ -37,4 +37,9 @@ class AddressServiceImpl implements AddressService {
 			.orElseThrow(() -> new NotFoundException("No address with id " + id));
 	}
 
+	@Override
+	public void deleteAllForUser(UUID userId) {
+		addressRepository.deleteByUserId(userId);
+	}
+
 }

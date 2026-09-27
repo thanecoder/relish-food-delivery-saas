@@ -36,4 +36,9 @@ class NotificationServiceImpl implements NotificationService {
 		return notification;
 	}
 
+	@Override
+	public void deleteAllForUser(UUID userId) {
+		notificationRepository.deleteByUserId(userId);
+	}
+
 }

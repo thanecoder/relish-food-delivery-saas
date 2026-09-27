@@ -11,4 +11,6 @@ public interface AddressService {
 
 	Address getById(UUID id);
 
+	void deleteAllForUser(UUID userId);
+
 }

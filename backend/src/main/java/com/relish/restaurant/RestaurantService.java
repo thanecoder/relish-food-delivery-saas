@@ -16,4 +16,6 @@ public interface RestaurantService {
 
 	Restaurant updateStatus(UUID id, RestaurantStatus status);
 
+	boolean existsForOwner(UUID ownerUserId);
+
 }

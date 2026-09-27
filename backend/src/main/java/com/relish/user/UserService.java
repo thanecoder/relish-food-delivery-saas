@@ -18,4 +18,8 @@ public interface UserService {
 
 	List<User> listActiveByRole(Role role);
 
+	// the row itself - caller is responsible for clearing everything that references it first,
+	// see AccountServiceImpl for the actual order that has to happen in
+	void deleteAccount(UUID userId);
+
 }

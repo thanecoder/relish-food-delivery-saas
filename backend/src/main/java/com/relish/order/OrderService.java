@@ -24,4 +24,9 @@ public interface OrderService {
 
 	Order advanceStatus(UUID orderId, OrderStatus newStatus, User changedBy);
 
+	// order matters here: items and status events reference the order and must go first
+	void deleteAllForCustomer(UUID customerId);
+
+	void clearActorReferences(UUID userId);
+
 }

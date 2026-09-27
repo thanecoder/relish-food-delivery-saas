@@ -70,6 +70,17 @@ class DeliveryServiceImpl implements DeliveryService {
 		return assignment;
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public boolean hasAssignmentsAsPartner(UUID userId) {
+		return assignmentRepository.existsByDeliveryPartnerId(userId);
+	}
+
+	@Override
+	public void deleteAllForCustomerOrders(UUID customerId) {
+		assignmentRepository.deleteAllForCustomerOrders(customerId);
+	}
+
 	private DeliveryAssignment requireOwnedByPartner(UUID assignmentId, User actingPartner) {
 		DeliveryAssignment assignment = getById(assignmentId);
 		if (!assignment.getDeliveryPartner().getId().equals(actingPartner.getId())) {

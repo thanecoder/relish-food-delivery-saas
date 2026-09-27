@@ -49,4 +49,9 @@ class UserServiceImpl implements UserService {
 		return userRepository.findByRoleAndStatus(role, UserStatus.ACTIVE);
 	}
 
+	@Override
+	public void deleteAccount(UUID userId) {
+		userRepository.deleteById(userId);
+	}
+
 }

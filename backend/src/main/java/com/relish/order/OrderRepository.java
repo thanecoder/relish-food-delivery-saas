@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 interface OrderRepository extends JpaRepository<Order, UUID> {
@@ -19,5 +20,11 @@ interface OrderRepository extends JpaRepository<Order, UUID> {
 
 	@Query("select o from Order o join fetch o.restaurant where o.restaurant.id = :restaurantId order by o.createdAt desc")
 	List<Order> findByRestaurantIdOrderByCreatedAtDesc(UUID restaurantId);
+
+	// items, status events and any delivery assignment have to be gone before this can run -
+	// see AccountServiceImpl for the order this actually has to happen in
+	@Modifying(clearAutomatically = true)
+	@Query("delete from Order o where o.customer.id = :customerId")
+	void deleteAllForCustomer(UUID customerId);
 
 }

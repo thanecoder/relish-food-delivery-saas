@@ -48,4 +48,10 @@ class RestaurantServiceImpl implements RestaurantService {
 		return restaurant;
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public boolean existsForOwner(UUID ownerUserId) {
+		return restaurantRepository.findByOwnerUserId(ownerUserId).isPresent();
+	}
+
 }

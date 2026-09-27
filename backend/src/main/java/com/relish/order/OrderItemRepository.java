@@ -3,6 +3,7 @@ package com.relish.order;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 interface OrderItemRepository extends JpaRepository<OrderItem, UUID> {
@@ -11,5 +12,9 @@ interface OrderItemRepository extends JpaRepository<OrderItem, UUID> {
 	// blowing up once OrderItemResponse gets built outside the transaction.
 	@Query("select oi from OrderItem oi join fetch oi.menuItem where oi.order.id = :orderId")
 	List<OrderItem> findByOrderId(UUID orderId);
+
+	@Modifying(clearAutomatically = true)
+	@Query("delete from OrderItem oi where oi.order.id in (select o.id from Order o where o.customer.id = :customerId)")
+	void deleteAllForCustomer(UUID customerId);
 
 }

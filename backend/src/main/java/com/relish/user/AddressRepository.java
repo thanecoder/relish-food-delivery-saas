@@ -8,4 +8,6 @@ interface AddressRepository extends JpaRepository<Address, UUID> {
 
 	List<Address> findByUserId(UUID userId);
 
+	void deleteByUserId(UUID userId);
+
 }

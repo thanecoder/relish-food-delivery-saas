@@ -25,7 +25,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 class OrderServiceImpl implements OrderService {
 
 	// flat fee for now, keeps things simple
-	private static final BigDecimal DELIVERY_FEE = new BigDecimal("2.99");
+	private static final BigDecimal DELIVERY_FEE = new BigDecimal("49.00");
 
 	// OUT_FOR_DELIVERY/DELIVERED arent here on purpose, those only happen thru the delivery events below
 	private static final Map<OrderStatus, Set<OrderStatus>> ADMIN_TRANSITIONS = Map.of(
@@ -120,6 +120,19 @@ class OrderServiceImpl implements OrderService {
 			case DELIVERED -> OrderStatus.DELIVERED;
 		};
 		applyStatus(order, newStatus, null);
+	}
+
+	@Override
+	public void deleteAllForCustomer(UUID customerId) {
+		// children before the parent, or postgres throws a foreign key violation instead of deleting anything
+		orderItemRepository.deleteAllForCustomer(customerId);
+		statusEventRepository.deleteAllForCustomerOrders(customerId);
+		orderRepository.deleteAllForCustomer(customerId);
+	}
+
+	@Override
+	public void clearActorReferences(UUID userId) {
+		statusEventRepository.clearChangedByUser(userId);
 	}
 
 	private void applyStatus(Order order, OrderStatus newStatus, User changedBy) {
