@@ -50,6 +50,8 @@ relish:
     secret: ${JWT_SECRET}
     access-ttl-minutes: ${JWT_ACCESS_TTL_MIN:15}
     refresh-ttl-days: ${JWT_REFRESH_TTL_DAYS:7}
+    # only has to outlive reading the terms page
+    registration-ttl-minutes: ${JWT_REGISTRATION_TTL_MIN:10}
   otp:
     ttl-minutes: 5
     max-attempts: 5

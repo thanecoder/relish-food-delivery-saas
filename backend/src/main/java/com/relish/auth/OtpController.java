@@ -1,8 +1,10 @@
 package com.relish.auth;
 
 import com.relish.common.ConflictException;
+import com.relish.common.ForbiddenException;
 import com.relish.user.User;
 import com.relish.user.UserService;
+import com.relish.user.UserStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.time.Instant;
@@ -36,6 +38,7 @@ class OtpController {
 		this.jwtService = jwtService;
 	}
 
+	// deliberately gives away nothing about whether the email is known, thats the whole point
 	@PostMapping("/otp/request")
 	ResponseEntity<Void> requestOtp(@Valid @RequestBody OtpRequestRequest request, HttpServletRequest httpRequest) {
 		otpService.requestOtp(request.email(), clientIp(httpRequest));
@@ -43,20 +46,39 @@ class OtpController {
 	}
 
 	@PostMapping("/otp/verify")
-	ResponseEntity<AuthResponse> verifyOtp(@Valid @RequestBody OtpVerifyRequest request) {
-		otpService.verifyOtp(request.email(), request.code());
+	ResponseEntity<OtpVerifyResponse> verifyOtp(@Valid @RequestBody OtpVerifyRequest request,
+			HttpServletRequest httpRequest) {
+		OtpVerifyResult result = otpService.verifyOtp(request.email(), request.code(), clientIp(httpRequest));
+		switch (result) {
+			case EXPIRED -> throw new ConflictException("That code has expired, request a new one.");
+			case TOO_MANY_ATTEMPTS -> throw new ConflictException("Too many attempts for this code, request a new one.");
+			case WRONG_CODE -> throw new ConflictException("That code isnt right.");
+			case VALID -> { /* carry on below */ }
+		}
 
 		Optional<User> existing = userService.findByEmail(request.email());
-		if (existing.isPresent()) {
-			return withNewSession(existing.get());
+		if (existing.isEmpty()) {
+			// code checked out, so the inbox is theirs - but nothing gets created until they've read
+			// the terms. Consent gets its own screen instead of riding along on this request.
+			String token = jwtService.issueRegistrationToken(request.email());
+			return ResponseEntity.ok(OtpVerifyResponse.registrationRequired(token, jwtService.registrationTtlSeconds()));
 		}
 
-		// brand new email - no account gets created without consent, even though the code was valid
-		if (!request.acceptedTerms()) {
-			throw new ConflictException("You need to accept the Terms & Conditions to create an account.");
-		}
-		User user = userService.createCustomer(request.email(), Instant.now());
-		return withNewSession(user);
+		User user = existing.get();
+		requireNotSuspended(user);
+		return asOutcome(newSession(user));
+	}
+
+	@PostMapping("/register")
+	ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+		Jwt token = jwtService.decodeRegistrationToken(request.registrationToken());
+		String email = token.getSubject();
+
+		// a double click or a second tab would otherwise replay the token straight into a unique key violation
+		User user = userService.findByEmail(email)
+			.orElseGet(() -> userService.createCustomer(email, Instant.now()));
+		requireNotSuspended(user);
+		return newSession(user);
 	}
 
 	@PostMapping("/refresh")
@@ -66,13 +88,15 @@ class OtpController {
 		}
 		Jwt jwt = jwtService.decodeRefreshToken(refreshCookie);
 		User user = userService.getById(UUID.fromString(jwt.getSubject()));
-		return withNewSession(user);
+		requireNotSuspended(user);
+		return newSession(user);
 	}
 
 	@GetMapping("/me")
 	ResponseEntity<AuthResponse> me(@AuthenticationPrincipal Jwt jwt) {
 		User user = userService.getById(UUID.fromString(jwt.getSubject()));
-		return ResponseEntity.ok(new AuthResponse(null, 0, user.getEmail(), user.getName(), user.getRole().name()));
+		return ResponseEntity.ok(new AuthResponse(null, 0, user.getEmail(), user.getName(), user.getRole().name(),
+			user.getStatus().name()));
 	}
 
 	@PostMapping("/logout")
@@ -82,9 +106,24 @@ class OtpController {
 		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cleared.toString()).build();
 	}
 
-	private ResponseEntity<AuthResponse> withNewSession(User user) {
-		String accessToken = jwtService.issueAccessToken(user.getId(), user.getEmail(), user.getRole());
-		String refreshToken = jwtService.issueRefreshToken(user.getId(), user.getEmail(), user.getRole());
+	private void requireNotSuspended(User user) {
+		if (user.getStatus() == UserStatus.SUSPENDED) {
+			throw new ForbiddenException("This account has been suspended. Get in touch with support.");
+		}
+	}
+
+	/** Same session, just announced as one of the two things a verify can end in. */
+	private ResponseEntity<OtpVerifyResponse> asOutcome(ResponseEntity<AuthResponse> session) {
+		return ResponseEntity.ok()
+			.headers(session.getHeaders())
+			.body(OtpVerifyResponse.session(session.getBody()));
+	}
+
+	private ResponseEntity<AuthResponse> newSession(User user) {
+		String accessToken = jwtService.issueAccessToken(user.getId(), user.getEmail(), user.getRole(),
+			user.getStatus());
+		String refreshToken = jwtService.issueRefreshToken(user.getId(), user.getEmail(), user.getRole(),
+			user.getStatus());
 
 		ResponseCookie cookie = ResponseCookie.from(REFRESH_COOKIE, refreshToken)
 			.httpOnly(true)
@@ -95,7 +134,7 @@ class OtpController {
 			.build();
 
 		AuthResponse body = new AuthResponse(accessToken, jwtService.accessTtlSeconds(), user.getEmail(),
-			user.getName(), user.getRole().name());
+			user.getName(), user.getRole().name(), user.getStatus().name());
 		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(body);
 	}
 

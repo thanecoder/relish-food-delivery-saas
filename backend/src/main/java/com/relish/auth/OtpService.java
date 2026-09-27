@@ -1,10 +1,9 @@
 package com.relish.auth;
 
-import com.relish.common.ConflictException;
+import com.relish.common.TooManyRequestsException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +19,7 @@ class OtpService {
 
 	private static final Logger log = LoggerFactory.getLogger(OtpService.class);
 	private static final SecureRandom RANDOM = new SecureRandom();
+	private static final Duration LIMIT_WINDOW = Duration.ofMinutes(15);
 
 	private final OtpChallengeRepository otpChallengeRepository;
 	private final RateLimiter rateLimiter;
@@ -42,10 +42,14 @@ class OtpService {
 	}
 
 	void requestOtp(String email, String requestIp) {
-		if (!rateLimiter.tryConsume("otp-req:" + email, 5, Duration.ofMinutes(15))
-				|| !rateLimiter.tryConsume("otp-req-ip:" + requestIp, 20, Duration.ofMinutes(15))) {
-			throw new ConflictException("Too many OTP requests, please wait a bit and try again.");
+		// single | on purpose - with || the ip bucket never gets charged once the email one is empty
+		if (!rateLimiter.tryConsume("otp-req:" + email, 5, LIMIT_WINDOW)
+				| !rateLimiter.tryConsume("otp-req-ip:" + requestIp, 20, LIMIT_WINDOW)) {
+			throw new TooManyRequestsException("Too many code requests, please wait a bit and try again.",
+				LIMIT_WINDOW);
 		}
+
+		otpChallengeRepository.consumeOutstanding(email, Instant.now());
 
 		String code = String.format("%06d", RANDOM.nextInt(1_000_000));
 		String hash = passwordEncoder.encode(code);
@@ -58,24 +62,33 @@ class OtpService {
 		sendEmail(email, code);
 	}
 
-	/** Returns true if the code was valid, throws otherwise. Doesnt create the user - the caller does that. */
-	boolean verifyOtp(String email, String code) {
-		List<OtpChallenge> challenges = otpChallengeRepository.findByIdentifierOrderByCreatedAtDesc(email);
-		OtpChallenge latest = challenges.stream().filter(c -> !c.isConsumed()).findFirst().orElse(null);
+	/**
+	 * Returns how the check went instead of throwing, so the attempt counter survives a wrong code.
+	 * The caller turns the result into a response.
+	 */
+	OtpVerifyResult verifyOtp(String email, String code, String requestIp) {
+		if (!rateLimiter.tryConsume("otp-vrf:" + email, 10, LIMIT_WINDOW)
+				| !rateLimiter.tryConsume("otp-vrf-ip:" + requestIp, 30, LIMIT_WINDOW)) {
+			throw new TooManyRequestsException("Too many attempts, please wait a bit and try again.", LIMIT_WINDOW);
+		}
+
+		OtpChallenge latest = otpChallengeRepository
+			.findFirstByIdentifierAndConsumedAtIsNullOrderByCreatedAtDesc(email)
+			.orElse(null);
 
 		if (latest == null || latest.isExpired()) {
-			throw new ConflictException("That code has expired, request a new one.");
+			return OtpVerifyResult.EXPIRED;
 		}
 		if (latest.getAttempts() >= maxAttempts) {
-			throw new ConflictException("Too many attempts for this code, request a new one.");
+			return OtpVerifyResult.TOO_MANY_ATTEMPTS;
 		}
 
 		latest.registerAttempt();
 		if (!passwordEncoder.matches(code, latest.getCodeHash())) {
-			throw new ConflictException("That code isnt right.");
+			return OtpVerifyResult.WRONG_CODE;
 		}
 		latest.markConsumed();
-		return true;
+		return OtpVerifyResult.VALID;
 	}
 
 	private void sendEmail(String email, String code) {

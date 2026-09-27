@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -33,6 +34,12 @@ class GlobalExceptionHandler {
 		return respond(HttpStatus.FORBIDDEN, "Your not authorized to do that.");
 	}
 
+	// same status, but here the reason is something we actually want to tell them
+	@ExceptionHandler(ForbiddenException.class)
+	ResponseEntity<ApiError> handleForbidden(ForbiddenException ex) {
+		return respond(HttpStatus.FORBIDDEN, ex.getMessage());
+	}
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex) {
 		List<String> details = ex.getBindingResult().getFieldErrors().stream()
@@ -52,6 +59,15 @@ class GlobalExceptionHandler {
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	ResponseEntity<ApiError> handleUnreadableBody(HttpMessageNotReadableException ex) {
 		return respond(HttpStatus.BAD_REQUEST, "Request body is missing or malformed.");
+	}
+
+	// Retry-After is what the resend countdown on the login screen reads
+	@ExceptionHandler(TooManyRequestsException.class)
+	ResponseEntity<ApiError> handleTooManyRequests(TooManyRequestsException ex) {
+		HttpStatus status = HttpStatus.TOO_MANY_REQUESTS;
+		return ResponseEntity.status(status)
+			.header(HttpHeaders.RETRY_AFTER, String.valueOf(ex.getRetryAfter().toSeconds()))
+			.body(ApiError.of(status.value(), status.getReasonPhrase(), ex.getMessage()));
 	}
 
 	@ExceptionHandler(Exception.class)

@@ -1,4 +1,4 @@
 package com.relish.auth;
 
-record AuthResponse(String accessToken, long expiresIn, String email, String name, String role) {
+record AuthResponse(String accessToken, long expiresIn, String email, String name, String role, String status) {
 }

@@ -6,15 +6,20 @@ import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import java.util.List;
 import javax.crypto.spec.SecretKeySpec;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwtClaimValidator;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtIssuerValidator;
+import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -29,8 +34,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity
 class SecurityConfig {
 
+	private static final String ISSUER = "relish";
+
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder,
+	SecurityFilterChain securityFilterChain(HttpSecurity http, @Qualifier("jwtDecoder") JwtDecoder jwtDecoder,
 			CorsConfigurationSource corsConfigurationSource) throws Exception {
 		JwtAuthenticationConverter authConverter = new JwtAuthenticationConverter();
 		JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
@@ -44,7 +51,8 @@ class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/actuator/health").permitAll()
-				.requestMatchers("/api/v1/auth/otp/**", "/api/v1/auth/refresh", "/api/v1/auth/logout").permitAll()
+				.requestMatchers("/api/v1/auth/otp/**", "/api/v1/auth/register", "/api/v1/auth/refresh",
+					"/api/v1/auth/logout").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 				.anyRequest().authenticated())
 			.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder).jwtAuthenticationConverter(authConverter)));
@@ -65,15 +73,36 @@ class SecurityConfig {
 
 	@Bean
 	JwtEncoder jwtEncoder(@Value("${relish.jwt.secret}") String secret) throws Exception {
-		SecretKeySpec key = new SecretKeySpec(secret.getBytes(), MacAlgorithm.HS256.getName());
-		OctetSequenceKey jwk = new OctetSequenceKey.Builder(key).algorithm(JWSAlgorithm.HS256).build();
+		OctetSequenceKey jwk = new OctetSequenceKey.Builder(signingKey(secret)).algorithm(JWSAlgorithm.HS256).build();
 		return new NimbusJwtEncoder(new ImmutableJWKSet<>(new JWKSet(jwk)));
 	}
 
+	// the one the resource server uses - refuses anything that isnt an access token, so a refresh
+	// or registration token cant be passed off as a bearer credential
 	@Bean
+	@Primary
 	JwtDecoder jwtDecoder(@Value("${relish.jwt.secret}") String secret) {
-		SecretKeySpec key = new SecretKeySpec(secret.getBytes(), MacAlgorithm.HS256.getName());
-		return NimbusJwtDecoder.withSecretKey(key).macAlgorithm(MacAlgorithm.HS256).build();
+		NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(signingKey(secret))
+			.macAlgorithm(MacAlgorithm.HS256).build();
+		decoder.setJwtValidator(JwtValidators.createDefaultWithValidators(
+			new JwtIssuerValidator(ISSUER),
+			// a missing claim comes through as null here, which fails the same way
+			new JwtClaimValidator<String>("token_type", "access"::equals)));
+		return decoder;
+	}
+
+	// signature + expiry + issuer only. JwtService uses this one to read the other token types,
+	// it does its own token_type check after decoding.
+	@Bean
+	JwtDecoder internalJwtDecoder(@Value("${relish.jwt.secret}") String secret) {
+		NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(signingKey(secret))
+			.macAlgorithm(MacAlgorithm.HS256).build();
+		decoder.setJwtValidator(JwtValidators.createDefaultWithValidators(new JwtIssuerValidator(ISSUER)));
+		return decoder;
+	}
+
+	private SecretKeySpec signingKey(String secret) {
+		return new SecretKeySpec(secret.getBytes(), MacAlgorithm.HS256.getName());
 	}
 
 }
