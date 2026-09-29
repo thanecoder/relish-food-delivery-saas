@@ -29,6 +29,14 @@ export type VerifyOutcome =
   | { kind: 'session'; user: AuthUser }
   | { kind: 'registrationRequired'; registrationToken: string; expiresIn: number };
 
+export interface AccountProfile {
+  email: string;
+  name: string;
+  role: string;
+  status: string;
+  memberSince: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly accessToken = signal<string | null>(null);
@@ -90,6 +98,16 @@ export class AuthService {
       this.accessToken.set(null);
       this.user.set(null);
     }
+  }
+
+  getAccount() {
+    return this.http.get<AccountProfile>('/api/v1/account');
+  }
+
+  /** Wipes the account server-side, then clears out the local session exactly like a logout would. */
+  async deleteAccount(): Promise<void> {
+    await firstValueFrom(this.http.delete<void>('/api/v1/account'));
+    await this.logout();
   }
 
   private applySession(res: AuthResponse): AuthUser {
