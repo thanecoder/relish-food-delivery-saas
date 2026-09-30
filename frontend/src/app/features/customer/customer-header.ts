@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,17 +8,26 @@ import { CartService } from './cart.service';
 
 @Component({
   selector: 'app-customer-header',
-  imports: [RouterLink, MatBadgeModule, MatButtonModule, MatIconModule],
+  imports: [RouterLink, RouterLinkActive, MatBadgeModule, MatButtonModule, MatIconModule],
   template: `
     <header class="bar">
       <a routerLink="/customer" class="brand">Relish</a>
+
+      <nav class="links">
+        <a routerLink="/customer" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          Restaurants
+        </a>
+        <a routerLink="/customer/orders" routerLinkActive="active">Orders</a>
+      </nav>
+
       <div class="spacer"></div>
-      <a mat-icon-button routerLink="/customer/orders" aria-label="Order history">
-        <mat-icon>receipt_long</mat-icon>
-      </a>
+
       <a mat-icon-button routerLink="/customer/checkout" aria-label="Cart"
          [matBadge]="cart.itemCount() || null" matBadgeColor="primary" matBadgeSize="small">
         <mat-icon>shopping_cart</mat-icon>
+      </a>
+      <a mat-icon-button routerLink="/customer/account" aria-label="Account">
+        <mat-icon>account_circle</mat-icon>
       </a>
       <button mat-button (click)="logout()">Log out</button>
     </header>
@@ -37,9 +46,41 @@ import { CartService } from './cart.service';
       font-size: 1.25rem;
       color: var(--mat-sys-primary);
       text-decoration: none;
+      margin-right: 28px;
+    }
+    .links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .links a {
+      color: var(--mat-sys-on-surface-variant);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 20px;
+      transition: background 0.12s ease, color 0.12s ease;
+    }
+    .links a:hover {
+      background: var(--mat-sys-surface-variant);
+    }
+    .links a.active {
+      color: var(--mat-sys-primary);
+      background: color-mix(in srgb, var(--mat-sys-primary) 12%, transparent);
     }
     .spacer {
       flex: 1;
+    }
+
+    @media (max-width: 600px) {
+      .brand {
+        margin-right: 12px;
+      }
+      .links a {
+        padding: 8px;
+        font-size: 0.82rem;
+      }
     }
   `,
 })
