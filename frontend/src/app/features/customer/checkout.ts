@@ -46,7 +46,7 @@ import { CustomerHeader } from './customer-header';
                 <div class="line">
                   <span class="qty">{{ line.quantity }}&times;</span>
                   <span class="name">{{ line.item.name }}</span>
-                  <span class="amt">\${{ line.item.price * line.quantity | number: '1.2-2' }}</span>
+                  <span class="amt">&#8377;{{ line.item.price * line.quantity | number: '1.2-2' }}</span>
                 </div>
               }
             </div>
@@ -97,9 +97,9 @@ import { CustomerHeader } from './customer-header';
           <div class="summary-card">
             <h2>Order summary</h2>
             <div class="totals">
-              <div class="row"><span>Subtotal</span><span>\${{ cart.subtotal() | number: '1.2-2' }}</span></div>
-              <div class="row"><span>Delivery fee</span><span>\$2.99</span></div>
-              <div class="row grand"><span>Total</span><span>\${{ cart.subtotal() + 2.99 | number: '1.2-2' }}</span></div>
+              <div class="row"><span>Subtotal</span><span>&#8377;{{ cart.subtotal() | number: '1.2-2' }}</span></div>
+              <div class="row"><span>Delivery fee</span><span>&#8377;49.00</span></div>
+              <div class="row grand"><span>Total</span><span>&#8377;{{ cart.subtotal() + 49 | number: '1.2-2' }}</span></div>
             </div>
 
             @if (errorMsg()) {
@@ -116,7 +116,7 @@ import { CustomerHeader } from './customer-header';
               @if (placing()) {
                 <mat-spinner diameter="20"></mat-spinner>
               } @else {
-                Place order &middot; \${{ cart.subtotal() + 2.99 | number: '1.2-2' }}
+                Place order &middot; &#8377;{{ cart.subtotal() + 49 | number: '1.2-2' }}
               }
             </button>
           </div>

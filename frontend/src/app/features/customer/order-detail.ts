@@ -60,7 +60,7 @@ const STEPS = ['PLACED', 'ACCEPTED', 'PREPARING', 'READY_FOR_PICKUP', 'OUT_FOR_D
                 <div class="line">
                   <span class="qty">{{ item.quantity }}&times;</span>
                   <span class="name">{{ item.menuItemName }}</span>
-                  <span class="amt">\${{ item.unitPrice * item.quantity | number: '1.2-2' }}</span>
+                  <span class="amt">&#8377;{{ item.unitPrice * item.quantity | number: '1.2-2' }}</span>
                 </div>
               }
             </div>
@@ -70,9 +70,9 @@ const STEPS = ['PLACED', 'ACCEPTED', 'PREPARING', 'READY_FOR_PICKUP', 'OUT_FOR_D
         <aside class="summary-col">
           <div class="summary-card">
             <h2>Receipt</h2>
-            <div class="row"><span>Subtotal</span><span>\${{ order()!.subtotal | number: '1.2-2' }}</span></div>
-            <div class="row"><span>Delivery fee</span><span>\${{ order()!.deliveryFee | number: '1.2-2' }}</span></div>
-            <div class="row grand"><span>Total</span><span>\${{ order()!.total | number: '1.2-2' }}</span></div>
+            <div class="row"><span>Subtotal</span><span>&#8377;{{ order()!.subtotal | number: '1.2-2' }}</span></div>
+            <div class="row"><span>Delivery fee</span><span>&#8377;{{ order()!.deliveryFee | number: '1.2-2' }}</span></div>
+            <div class="row grand"><span>Total</span><span>&#8377;{{ order()!.total | number: '1.2-2' }}</span></div>
           </div>
         </aside>
       </div>

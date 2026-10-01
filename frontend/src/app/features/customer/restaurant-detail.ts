@@ -47,7 +47,7 @@ import { CustomerHeader } from './customer-header';
                       @if (item.description) {
                         <div class="idesc">{{ item.description }}</div>
                       }
-                      <div class="price">\${{ item.price | number: '1.2-2' }}</div>
+                      <div class="price">&#8377;{{ item.price | number: '1.2-2' }}</div>
                     </div>
                     <div class="action">
                       @if (qtyInCart(item.id) > 0) {
@@ -80,14 +80,14 @@ import { CustomerHeader } from './customer-header';
                   <div class="cart-line">
                     <span class="cl-qty">{{ line.quantity }}&times;</span>
                     <span class="cl-name">{{ line.item.name }}</span>
-                    <span class="cl-amt">\${{ line.item.price * line.quantity | number: '1.2-2' }}</span>
+                    <span class="cl-amt">&#8377;{{ line.item.price * line.quantity | number: '1.2-2' }}</span>
                   </div>
                 }
               </div>
               <div class="cart-totals">
-                <div class="row"><span>Subtotal</span><span>\${{ cart.subtotal() | number: '1.2-2' }}</span></div>
-                <div class="row"><span>Delivery fee</span><span>\$2.99</span></div>
-                <div class="row grand"><span>Total</span><span>\${{ cart.subtotal() + 2.99 | number: '1.2-2' }}</span></div>
+                <div class="row"><span>Subtotal</span><span>&#8377;{{ cart.subtotal() | number: '1.2-2' }}</span></div>
+                <div class="row"><span>Delivery fee</span><span>&#8377;49.00</span></div>
+                <div class="row grand"><span>Total</span><span>&#8377;{{ cart.subtotal() + 49 | number: '1.2-2' }}</span></div>
               </div>
               <button mat-flat-button color="primary" class="checkout-btn" (click)="goToCheckout()">
                 Go to checkout
@@ -99,7 +99,7 @@ import { CustomerHeader } from './customer-header';
 
       @if (cart.itemCount() > 0) {
         <div class="cart-bar">
-          <span>{{ cart.itemCount() }} item{{ cart.itemCount() === 1 ? '' : 's' }} &middot; \${{ cart.subtotal() | number: '1.2-2' }}</span>
+          <span>{{ cart.itemCount() }} item{{ cart.itemCount() === 1 ? '' : 's' }} &middot; &#8377;{{ cart.subtotal() | number: '1.2-2' }}</span>
           <button mat-flat-button color="primary" (click)="goToCheckout()">View cart</button>
         </div>
       }

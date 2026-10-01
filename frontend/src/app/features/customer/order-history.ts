@@ -41,7 +41,7 @@ const STATUS_LABEL: Record<string, string> = {
               </div>
               <div class="right">
                 <span class="status" [class]="'s-' + o.status.toLowerCase()">{{ statusLabel(o.status) }}</span>
-                <span class="total">\${{ o.total | number: '1.2-2' }}</span>
+                <span class="total">&#8377;{{ o.total | number: '1.2-2' }}</span>
               </div>
             </button>
           }
