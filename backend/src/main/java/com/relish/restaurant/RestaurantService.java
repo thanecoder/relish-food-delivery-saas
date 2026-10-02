@@ -8,6 +8,8 @@ public interface RestaurantService {
 
 	Restaurant getById(UUID id);
 
+	Restaurant getByOwner(UUID ownerUserId);
+
 	List<Restaurant> listApproved();
 
 	List<Restaurant> listByStatus(RestaurantStatus status);

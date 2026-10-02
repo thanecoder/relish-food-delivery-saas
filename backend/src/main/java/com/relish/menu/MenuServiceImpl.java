@@ -34,6 +34,13 @@ class MenuServiceImpl implements MenuService {
 
 	@Override
 	@Transactional(readOnly = true)
+	public MenuCategory getCategoryById(UUID categoryId) {
+		return categoryRepository.findById(categoryId)
+			.orElseThrow(() -> new NotFoundException("No menu category with id " + categoryId));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public MenuItem getItemById(UUID itemId) {
 		return itemRepository.findById(itemId)
 			.orElseThrow(() -> new NotFoundException("No menu item with id " + itemId));
@@ -45,8 +52,26 @@ class MenuServiceImpl implements MenuService {
 	}
 
 	@Override
-	public MenuItem addItem(MenuCategory category, String name, BigDecimal price, boolean isVeg) {
-		return itemRepository.save(new MenuItem(category, name, price, isVeg));
+	public MenuCategory updateCategory(UUID categoryId, String name, int sortOrder) {
+		MenuCategory category = getCategoryById(categoryId);
+		category.setName(name);
+		category.setSortOrder(sortOrder);
+		return category;
+	}
+
+	@Override
+	public MenuItem addItem(MenuCategory category, String name, String description, BigDecimal price, boolean isVeg) {
+		return itemRepository.save(new MenuItem(category, name, description, price, isVeg));
+	}
+
+	@Override
+	public MenuItem updateItem(UUID itemId, String name, String description, BigDecimal price, boolean isVeg) {
+		MenuItem item = getItemById(itemId);
+		item.setName(name);
+		item.setDescription(description);
+		item.setPrice(price);
+		item.setVeg(isVeg);
+		return item;
 	}
 
 	@Override
@@ -54,6 +79,18 @@ class MenuServiceImpl implements MenuService {
 		MenuItem item = getItemById(itemId);
 		item.setAvailable(available);
 		return item;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public boolean isCategoryInRestaurant(UUID categoryId, UUID restaurantId) {
+		return categoryRepository.existsByIdAndRestaurantId(categoryId, restaurantId);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public boolean isItemInRestaurant(UUID itemId, UUID restaurantId) {
+		return itemRepository.existsByIdAndCategory_RestaurantId(itemId, restaurantId);
 	}
 
 }

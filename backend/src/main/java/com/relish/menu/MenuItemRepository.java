@@ -8,4 +8,7 @@ interface MenuItemRepository extends JpaRepository<MenuItem, UUID> {
 
 	List<MenuItem> findByCategoryId(UUID categoryId);
 
+	// same reasoning as MenuCategoryRepository.existsByIdAndRestaurantId - one query, no lazy walk
+	boolean existsByIdAndCategory_RestaurantId(UUID id, UUID restaurantId);
+
 }

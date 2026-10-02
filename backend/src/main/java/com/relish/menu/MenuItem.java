@@ -37,9 +37,10 @@ public class MenuItem extends BaseEntity {
 	protected MenuItem() {
 	}
 
-	public MenuItem(MenuCategory category, String name, BigDecimal price, boolean isVeg) {
+	public MenuItem(MenuCategory category, String name, String description, BigDecimal price, boolean isVeg) {
 		this.category = category;
 		this.name = name;
+		this.description = description;
 		this.price = price;
 		this.isVeg = isVeg;
 		this.isAvailable = true;

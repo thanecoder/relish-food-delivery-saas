@@ -26,6 +26,13 @@ class RestaurantServiceImpl implements RestaurantService {
 
 	@Override
 	@Transactional(readOnly = true)
+	public Restaurant getByOwner(UUID ownerUserId) {
+		return restaurantRepository.findByOwnerUserId(ownerUserId)
+			.orElseThrow(() -> new NotFoundException("No restaurant owned by user " + ownerUserId));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public List<Restaurant> listApproved() {
 		return restaurantRepository.findByStatus(RestaurantStatus.APPROVED);
 	}
