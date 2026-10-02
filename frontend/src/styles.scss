@@ -1,7 +1,8 @@
 @use '@angular/material' as mat;
 @use './styles/tokens/theme-colors' as tokens;
 
-// blaze theme, palette generated from seed colors #E63A1E / #FFB627 (see tokens/_theme-colors.scss)
+// blaze theme, palette generated from seed colors #C1573A / #D9A853 (see tokens/_theme-colors.scss)
+// toned down from the original #E63A1E / #FFB627 - same warm direction, less shouting
 html {
   height: 100%;
   @include mat.theme(
