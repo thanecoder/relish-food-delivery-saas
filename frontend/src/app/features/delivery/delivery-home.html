@@ -1,1 +1,33 @@
-<p>Delivery Partner area — placeholder (built in M5c).</p>
+<app-delivery-header></app-delivery-header>
+
+<div class="page">
+  <h1>Your deliveries</h1>
+
+  @if (loading()) {
+    <div class="center">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+  } @else if (assignments().length === 0) {
+    <p class="empty">Nothing assigned right now.</p>
+  } @else {
+    <div class="list">
+      @for (a of assignments(); track a.id) {
+        <div class="card">
+          <div class="top">
+            <span class="rest">{{ a.restaurantName }}</span>
+            <span class="status" [class]="'s-' + a.status.toLowerCase()">{{ a.status }}</span>
+          </div>
+          <div class="addr">{{ a.deliveryAddressLine }}, {{ a.deliveryCity }}</div>
+          <div class="bottom">
+            <span class="total">&#8377;{{ a.total | number: '1.2-2' }}</span>
+            @if (a.status === 'ASSIGNED') {
+              <button mat-flat-button [disabled]="updating() === a.id" (click)="pickUp(a)">Mark picked up</button>
+            } @else if (a.status === 'PICKED_UP') {
+              <button mat-flat-button [disabled]="updating() === a.id" (click)="deliver(a)">Mark delivered</button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

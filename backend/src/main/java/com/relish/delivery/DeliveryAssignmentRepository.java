@@ -11,6 +11,12 @@ interface DeliveryAssignmentRepository extends JpaRepository<DeliveryAssignment,
 
 	Optional<DeliveryAssignment> findByOrderId(UUID orderId);
 
+	// order/restaurant/address fetched eagerly - same reasoning as OrderRepository, the response
+	// DTO gets built after this transaction closes and open-in-view is off
+	@Query("select a from DeliveryAssignment a join fetch a.order o join fetch o.restaurant join fetch o.deliveryAddress where a.id = :id")
+	Optional<DeliveryAssignment> findByIdFetchOrder(UUID id);
+
+	@Query("select a from DeliveryAssignment a join fetch a.order o join fetch o.restaurant join fetch o.deliveryAddress where a.deliveryPartner.id = :deliveryPartnerId order by a.createdAt desc")
 	List<DeliveryAssignment> findByDeliveryPartnerIdOrderByCreatedAtDesc(UUID deliveryPartnerId);
 
 	long countByDeliveryPartnerIdAndStatusNot(UUID deliveryPartnerId, DeliveryAssignmentStatus status);

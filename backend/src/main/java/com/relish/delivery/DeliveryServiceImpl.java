@@ -42,7 +42,7 @@ class DeliveryServiceImpl implements DeliveryService {
 	@Override
 	@Transactional(readOnly = true)
 	public DeliveryAssignment getById(UUID id) {
-		return assignmentRepository.findById(id)
+		return assignmentRepository.findByIdFetchOrder(id)
 			.orElseThrow(() -> new NotFoundException("No delivery assignment with id " + id));
 	}
 

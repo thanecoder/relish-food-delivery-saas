@@ -1,0 +1,64 @@
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+h1 {
+  margin: 0 0 20px;
+  font-size: 1.6rem;
+}
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+}
+.empty {
+  color: var(--mat-sys-on-surface-variant);
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.card {
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: var(--mat-sys-surface);
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.rest {
+  font-weight: 600;
+}
+.status {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--mat-sys-surface-variant);
+  color: var(--mat-sys-on-surface-variant);
+}
+.status.s-delivered {
+  background: color-mix(in srgb, #2e7d32 18%, transparent);
+  color: #2e7d32;
+}
+.addr {
+  font-size: 0.85rem;
+  color: var(--mat-sys-on-surface-variant);
+  margin-bottom: 12px;
+}
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.total {
+  font-weight: 600;
+}
