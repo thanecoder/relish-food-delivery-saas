@@ -1,1 +1,51 @@
-<p>Platform Admin area — placeholder (built in M5d).</p>
+<app-platform-admin-header></app-platform-admin-header>
+
+<div class="page">
+  <h1>Approvals</h1>
+
+  @if (loading()) {
+    <div class="center">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+  } @else {
+    <section class="block">
+      <h2>Restaurants waiting on approval</h2>
+      @if (restaurants().length === 0) {
+        <p class="empty">Nothing pending.</p>
+      } @else {
+        <div class="list">
+          @for (r of restaurants(); track r.id) {
+            <div class="card">
+              <div class="main">
+                <span class="name">{{ r.name }}</span>
+                <span class="sub">{{ r.addressLine }}, {{ r.city }}</span>
+              </div>
+              <button mat-flat-button [disabled]="approving() === r.id" (click)="approveRestaurant(r)">
+                Approve
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="block">
+      <h2>Accounts waiting on approval</h2>
+      @if (users().length === 0) {
+        <p class="empty">Nothing pending.</p>
+      } @else {
+        <div class="list">
+          @for (u of users(); track u.id) {
+            <div class="card">
+              <div class="main">
+                <span class="name">{{ u.name }}</span>
+                <span class="sub">{{ u.email }} &middot; {{ u.role }}</span>
+              </div>
+              <button mat-flat-button [disabled]="approving() === u.id" (click)="approveUser(u)">Approve</button>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
+</div>

@@ -50,6 +50,12 @@ class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
+	public List<User> listByStatus(UserStatus status) {
+		return userRepository.findByStatus(status);
+	}
+
+	@Override
 	public void deleteAccount(UUID userId) {
 		userRepository.deleteById(userId);
 	}

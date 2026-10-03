@@ -18,6 +18,9 @@ public interface UserService {
 
 	List<User> listActiveByRole(Role role);
 
+	// restaurant admin / delivery partner accounts waiting on platform admin approval
+	List<User> listByStatus(UserStatus status);
+
 	// the row itself - caller is responsible for clearing everything that references it first,
 	// see AccountServiceImpl for the actual order that has to happen in
 	void deleteAccount(UUID userId);
