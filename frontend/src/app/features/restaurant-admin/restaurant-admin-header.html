@@ -1,0 +1,16 @@
+<header class="bar">
+  <a routerLink="/restaurant-admin" class="brand">Relish <span class="for">for restaurants</span></a>
+
+  <nav class="links">
+    <a routerLink="/restaurant-admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      Menu
+    </a>
+  </nav>
+
+  <div class="spacer"></div>
+
+  <a mat-icon-button routerLink="/restaurant-admin/account" aria-label="Account">
+    <mat-icon>account_circle</mat-icon>
+  </a>
+  <button mat-button (click)="logout()">Log out</button>
+</header>

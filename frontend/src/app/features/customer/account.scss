@@ -1,0 +1,70 @@
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+h1 {
+  margin: 0 0 20px;
+  font-size: 1.6rem;
+}
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+}
+.card {
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 14px;
+  padding: 6px 20px;
+  background: var(--mat-sys-surface);
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  font-size: 0.92rem;
+}
+.row:last-child {
+  border-bottom: none;
+}
+.label {
+  color: var(--mat-sys-on-surface-variant);
+}
+.danger {
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+.danger h2 {
+  font-size: 1.05rem;
+  margin: 0 0 10px;
+  color: var(--mat-sys-error);
+}
+.hint {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.88rem;
+  margin: 0 0 14px;
+  max-width: 480px;
+}
+.confirm-box {
+  border: 1px solid var(--mat-sys-error);
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: color-mix(in srgb, var(--mat-sys-error) 6%, transparent);
+}
+.confirm-box p {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+}
+.error {
+  color: var(--mat-sys-error);
+  font-size: 0.85rem;
+  margin: 8px 0 0 !important;
+}
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}

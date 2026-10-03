@@ -9,6 +9,8 @@ export interface MyRestaurant {
   addressLine: string;
   city: string;
   status: string;
+  opensAt: string | null;
+  closesAt: string | null;
 }
 
 export interface MenuItem {
@@ -33,6 +35,10 @@ export class RestaurantAdminApiService {
 
   getMyRestaurant() {
     return this.http.get<MyRestaurant>('/api/v1/restaurant-admin/restaurant');
+  }
+
+  updateMyRestaurant(profile: { addressLine: string; city: string; opensAt: string; closesAt: string }) {
+    return this.http.put<MyRestaurant>('/api/v1/restaurant-admin/restaurant', profile);
   }
 
   getMyMenu() {

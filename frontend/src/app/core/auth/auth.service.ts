@@ -35,6 +35,7 @@ export interface AccountProfile {
   role: string;
   status: string;
   memberSince: string;
+  termsAcceptedAt: string;
 }
 
 @Injectable({ providedIn: 'root' })

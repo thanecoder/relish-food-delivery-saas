@@ -1,0 +1,90 @@
+<app-restaurant-admin-header></app-restaurant-admin-header>
+
+<div class="page">
+  <h1>Account</h1>
+
+  @if (loading()) {
+    <div class="center">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+  } @else {
+    @if (profile()) {
+      <div class="card">
+        <div class="row"><span class="label">Email</span><span>{{ profile()!.email }}</span></div>
+        <div class="row"><span class="label">Role</span><span>Restaurant Admin</span></div>
+        <div class="row"><span class="label">Member since</span><span>{{ profile()!.memberSince | date: 'mediumDate' }}</span></div>
+        <div class="row"><span class="label">Terms accepted</span><span>{{ profile()!.termsAcceptedAt | date: 'mediumDate' }}</span></div>
+      </div>
+    }
+
+    <section class="block">
+      <h2>Restaurant profile</h2>
+      <p class="hint">Address and opening hours shown to customers. Get in touch with support to change the name.</p>
+
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <label class="field">
+          <span>Address line</span>
+          <input formControlName="addressLine" placeholder="Street address" />
+        </label>
+        <label class="field">
+          <span>City</span>
+          <input formControlName="city" placeholder="City" />
+        </label>
+        <div class="hours-row">
+          <label class="field">
+            <span>Opens at</span>
+            <input formControlName="opensAt" type="time" />
+          </label>
+          <label class="field">
+            <span>Closes at</span>
+            <input formControlName="closesAt" type="time" />
+          </label>
+        </div>
+
+        @if (savedMsg()) {
+          <p class="saved">{{ savedMsg() }}</p>
+        }
+        @if (errorMsg()) {
+          <p class="error">{{ errorMsg() }}</p>
+        }
+
+        <button mat-flat-button color="primary" class="save" [disabled]="profileForm.invalid || saving()">
+          @if (saving()) {
+            <mat-spinner diameter="18"></mat-spinner>
+          } @else {
+            Save changes
+          }
+        </button>
+      </form>
+    </section>
+
+    <section class="danger">
+      <h2>Danger zone</h2>
+
+      @if (!confirming()) {
+        <p class="hint">
+          Deleting your account is permanent. It's refused while you still have a restaurant on
+          Relish - get in touch with support first if you actually want to close it down.
+        </p>
+        <button mat-stroked-button color="warn" (click)="confirming.set(true)">Delete my account</button>
+      } @else {
+        <div class="confirm-box">
+          <p><strong>Are you sure?</strong> This can't be undone.</p>
+          @if (deleteErrorMsg()) {
+            <p class="error">{{ deleteErrorMsg() }}</p>
+          }
+          <div class="confirm-actions">
+            <button mat-button [disabled]="deleting()" (click)="confirming.set(false)">Cancel</button>
+            <button mat-flat-button color="warn" [disabled]="deleting()" (click)="deleteAccount()">
+              @if (deleting()) {
+                <mat-spinner diameter="18"></mat-spinner>
+              } @else {
+                Yes, delete my account
+              }
+            </button>
+          </div>
+        </div>
+      }
+    </section>
+  }
+</div>

@@ -1,0 +1,50 @@
+<app-customer-header></app-customer-header>
+
+<div class="page">
+  <h1>Account</h1>
+
+  @if (loading()) {
+    <div class="center">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+  } @else if (profile()) {
+    <div class="card">
+      <div class="row"><span class="label">Email</span><span>{{ profile()!.email }}</span></div>
+      <div class="row"><span class="label">Role</span><span>{{ roleLabel(profile()!.role) }}</span></div>
+      <div class="row"><span class="label">Member since</span><span>{{ profile()!.memberSince | date: 'mediumDate' }}</span></div>
+      <div class="row"><span class="label">Terms accepted</span><span>{{ profile()!.termsAcceptedAt | date: 'mediumDate' }}</span></div>
+    </div>
+
+    <section class="danger">
+      <h2>Danger zone</h2>
+
+      @if (!confirming()) {
+        <p class="hint">
+          Deleting your account permanently removes your profile, saved addresses, and order
+          history from Relish. This can't be undone.
+        </p>
+        <button mat-stroked-button color="warn" (click)="confirming.set(true)">Delete my account</button>
+      } @else {
+        <div class="confirm-box">
+          <p>
+            <strong>Are you sure?</strong> This deletes your account and everything tied to it -
+            addresses, order history, all of it. There's no getting it back after this.
+          </p>
+          @if (errorMsg()) {
+            <p class="error">{{ errorMsg() }}</p>
+          }
+          <div class="confirm-actions">
+            <button mat-button [disabled]="deleting()" (click)="confirming.set(false)">Cancel</button>
+            <button mat-flat-button color="warn" [disabled]="deleting()" (click)="deleteAccount()">
+              @if (deleting()) {
+                <mat-spinner diameter="18"></mat-spinner>
+              } @else {
+                Yes, delete my account
+              }
+            </button>
+          </div>
+        </div>
+      }
+    </section>
+  }
+</div>

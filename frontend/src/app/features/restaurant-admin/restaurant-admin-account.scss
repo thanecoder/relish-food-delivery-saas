@@ -1,0 +1,115 @@
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+h1 {
+  margin: 0 0 20px;
+  font-size: 1.6rem;
+}
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+}
+.card {
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 14px;
+  padding: 6px 20px;
+  background: var(--mat-sys-surface);
+  margin-bottom: 32px;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  font-size: 0.92rem;
+}
+.row:last-child {
+  border-bottom: none;
+}
+.label {
+  color: var(--mat-sys-on-surface-variant);
+}
+.block {
+  margin-bottom: 32px;
+}
+.block h2 {
+  font-size: 1.05rem;
+  margin: 0 0 6px;
+}
+.hint {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.85rem;
+  margin: 0 0 16px;
+  max-width: 480px;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.82rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+.field input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--mat-sys-outline);
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+.hours-row {
+  display: flex;
+  gap: 14px;
+}
+.hours-row .field {
+  flex: 1;
+}
+.saved {
+  color: #2e7d32;
+  font-size: 0.85rem;
+  margin: 0;
+}
+.error {
+  color: var(--mat-sys-error);
+  font-size: 0.85rem;
+  margin: 0;
+}
+.save {
+  align-self: flex-start;
+  height: 44px;
+  padding: 0 22px;
+}
+.danger {
+  padding-top: 24px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+.danger h2 {
+  font-size: 1.05rem;
+  margin: 0 0 10px;
+  color: var(--mat-sys-error);
+}
+.confirm-box {
+  border: 1px solid var(--mat-sys-error);
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: color-mix(in srgb, var(--mat-sys-error) 6%, transparent);
+}
+.confirm-box p {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+}
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
