@@ -15,62 +15,8 @@ const WAITING_ON: Record<string, string> = {
 @Component({
   selector: 'app-pending-review',
   imports: [MatButtonModule, MatCardModule, MatIconModule],
-  template: `
-    <div class="wrap">
-      <mat-card class="card">
-        <mat-icon class="badge">hourglass_top</mat-icon>
-        <h1>Application under review</h1>
-        <p class="sub">{{ message }}</p>
-        <p class="who">Signed in as {{ email }}</p>
-        <button mat-flat-button color="primary" class="out" (click)="logout()">Log out</button>
-      </mat-card>
-    </div>
-  `,
-  styles: `
-    .wrap {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-    .card {
-      width: 100%;
-      max-width: 420px;
-      padding: 36px 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 6px;
-    }
-    .badge {
-      font-size: 40px;
-      width: 40px;
-      height: 40px;
-      color: var(--mat-sys-primary);
-      margin-bottom: 6px;
-    }
-    h1 {
-      margin: 0;
-      font-size: 1.4rem;
-    }
-    .sub {
-      margin: 6px 0 0;
-      color: var(--mat-sys-on-surface-variant);
-      font-size: 0.9rem;
-    }
-    .who {
-      margin: 14px 0 0;
-      font-size: 0.8rem;
-      color: var(--mat-sys-on-surface-variant);
-    }
-    .out {
-      margin-top: 18px;
-      height: 42px;
-      align-self: stretch;
-    }
-  `,
+  templateUrl: './pending-review.html',
+  styleUrl: './pending-review.scss',
 })
 export class PendingReview {
   message: string;

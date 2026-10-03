@@ -1,0 +1,28 @@
+<app-customer-header></app-customer-header>
+
+<div class="page">
+  <h1>Your orders</h1>
+
+  @if (loading()) {
+    <div class="center">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+  } @else if (orders().length === 0) {
+    <p class="empty">No orders yet.</p>
+  } @else {
+    <div class="grid">
+      @for (o of orders(); track o.id) {
+        <button class="order" (click)="open(o)">
+          <div class="left">
+            <div class="rest">{{ o.restaurantName }}</div>
+            <div class="date">{{ o.placedAt | date: 'MMM d, h:mm a' }}</div>
+          </div>
+          <div class="right">
+            <span class="status" [class]="'s-' + o.status.toLowerCase()">{{ statusLabel(o.status) }}</span>
+            <span class="total">&#8377;{{ o.total | number: '1.2-2' }}</span>
+          </div>
+        </button>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,100 @@
+<app-customer-header></app-customer-header>
+
+@if (cart.lines().length === 0) {
+  <div class="page-narrow">
+    <p class="empty">Your cart is empty. <a (click)="browse()">Browse restaurants</a></p>
+  </div>
+} @else {
+  <div class="layout">
+    <div class="main-col">
+      <button mat-button class="back" (click)="backToMenu()">
+        <mat-icon>arrow_back</mat-icon> Back to menu
+      </button>
+
+      <h1>Checkout</h1>
+      <p class="restaurant-name">Order from {{ cart.restaurantName() }}</p>
+
+      <section class="block">
+        <h2>Items</h2>
+        <div class="lines">
+          @for (line of cart.lines(); track line.item.id) {
+            <div class="line">
+              <span class="qty">{{ line.quantity }}&times;</span>
+              <span class="name">{{ line.item.name }}</span>
+              <span class="amt">&#8377;{{ line.item.price * line.quantity | number: '1.2-2' }}</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="block">
+        <h2>Deliver to</h2>
+
+        @if (loadingAddresses()) {
+          <mat-spinner diameter="24"></mat-spinner>
+        } @else {
+          @if (addresses().length > 0) {
+            <mat-radio-group [(ngModel)]="selectedAddressId" class="addr-group">
+              @for (a of addresses(); track a.id) {
+                <label class="addr">
+                  <mat-radio-button [value]="a.id"></mat-radio-button>
+                  <span>
+                    <strong>{{ a.label }}</strong> &mdash; {{ a.line1 }}@if (a.line2) {, {{ a.line2 }}}, {{ a.city }}
+                  </span>
+                </label>
+              }
+            </mat-radio-group>
+          }
+
+          @if (!showNewAddress()) {
+            <button mat-button (click)="showNewAddress.set(true)">
+              <mat-icon>add</mat-icon> Add a new address
+            </button>
+          } @else {
+            <form [formGroup]="addressForm" class="addr-form" (ngSubmit)="saveAddress()">
+              <input formControlName="label" placeholder="Label (e.g. Home)" />
+              <input formControlName="line1" placeholder="Address line 1" />
+              <input formControlName="line2" placeholder="Address line 2 (optional)" />
+              <input formControlName="city" placeholder="City" />
+              <div class="addr-form-actions">
+                <button type="button" mat-button (click)="showNewAddress.set(false)">Cancel</button>
+                <button type="submit" mat-stroked-button [disabled]="addressForm.invalid || savingAddress()">
+                  Save address
+                </button>
+              </div>
+            </form>
+          }
+        }
+      </section>
+    </div>
+
+    <aside class="summary-col">
+      <div class="summary-card">
+        <h2>Order summary</h2>
+        <div class="totals">
+          <div class="row"><span>Subtotal</span><span>&#8377;{{ cart.subtotal() | number: '1.2-2' }}</span></div>
+          <div class="row"><span>Delivery fee</span><span>&#8377;49.00</span></div>
+          <div class="row grand"><span>Total</span><span>&#8377;{{ cart.subtotal() + 49 | number: '1.2-2' }}</span></div>
+        </div>
+
+        @if (errorMsg()) {
+          <p class="error">{{ errorMsg() }}</p>
+        }
+
+        <button
+          mat-flat-button
+          color="primary"
+          class="place"
+          [disabled]="!selectedAddressId || placing()"
+          (click)="placeOrder()"
+        >
+          @if (placing()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            Place order &middot; &#8377;{{ cart.subtotal() + 49 | number: '1.2-2' }}
+          }
+        </button>
+      </div>
+    </aside>
+  </div>
+}

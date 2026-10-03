@@ -1,0 +1,53 @@
+<app-customer-header></app-customer-header>
+
+@if (loading()) {
+  <div class="center">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+} @else if (order()) {
+  <div class="layout">
+    <div class="main-col">
+      <button mat-button class="back" (click)="back()">
+        <mat-icon>arrow_back</mat-icon> Your orders
+      </button>
+
+      <h1>{{ order()!.restaurantName }}</h1>
+      <p class="sub">{{ order()!.placedAt | date: 'medium' }}</p>
+
+      @if (stepIndex() >= 0 && !isTerminalFailure()) {
+        <div class="steps">
+          @for (s of steps; track s; let i = $index) {
+            <div class="step" [class.done]="i <= stepIndex()">
+              <div class="dot"></div>
+              <span>{{ statusLabel(s) }}</span>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="status-line" [class.bad]="isTerminalFailure()">{{ statusLabel(order()!.status) }}</p>
+      }
+
+      <section class="block">
+        <h2>Items</h2>
+        <div class="lines">
+          @for (item of order()!.items; track item.menuItemName) {
+            <div class="line">
+              <span class="qty">{{ item.quantity }}&times;</span>
+              <span class="name">{{ item.menuItemName }}</span>
+              <span class="amt">&#8377;{{ item.unitPrice * item.quantity | number: '1.2-2' }}</span>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+
+    <aside class="summary-col">
+      <div class="summary-card">
+        <h2>Receipt</h2>
+        <div class="row"><span>Subtotal</span><span>&#8377;{{ order()!.subtotal | number: '1.2-2' }}</span></div>
+        <div class="row"><span>Delivery fee</span><span>&#8377;{{ order()!.deliveryFee | number: '1.2-2' }}</span></div>
+        <div class="row grand"><span>Total</span><span>&#8377;{{ order()!.total | number: '1.2-2' }}</span></div>
+      </div>
+    </aside>
+  </div>
+}

@@ -2,6 +2,6 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-platform-admin-home',
-  template: `<p>Platform Admin area — placeholder (built in M5d).</p>`,
+  templateUrl: './platform-admin-home.html',
 })
 export class PlatformAdminHome {}

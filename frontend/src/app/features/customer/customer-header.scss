@@ -1,0 +1,49 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface);
+}
+.brand {
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--mat-sys-primary);
+  text-decoration: none;
+  margin-right: 28px;
+}
+.links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.links a {
+  color: var(--mat-sys-on-surface-variant);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 20px;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.links a:hover {
+  background: var(--mat-sys-surface-variant);
+}
+.links a.active {
+  color: var(--mat-sys-primary);
+  background: color-mix(in srgb, var(--mat-sys-primary) 12%, transparent);
+}
+.spacer {
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .brand {
+    margin-right: 12px;
+  }
+  .links a {
+    padding: 8px;
+    font-size: 0.82rem;
+  }
+}

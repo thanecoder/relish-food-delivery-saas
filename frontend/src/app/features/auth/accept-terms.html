@@ -1,0 +1,28 @@
+<div class="page">
+  <header class="head">
+    <h1>Before we set up your account</h1>
+    <p class="sub">
+      Your email <strong>{{ email }}</strong> is confirmed. Have a read of our terms - your account gets
+      created once you accept them.
+    </p>
+  </header>
+
+  <div class="scroll">
+    <app-terms-content></app-terms-content>
+  </div>
+
+  @if (errorMsg()) {
+    <p class="error">{{ errorMsg() }}</p>
+  }
+
+  <footer class="actions">
+    <button mat-button class="cancel" [disabled]="submitting()" (click)="cancel()">Cancel</button>
+    <button mat-flat-button color="primary" class="accept" [disabled]="submitting()" (click)="accept()">
+      @if (submitting()) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        Accept &amp; create account
+      }
+    </button>
+  </footer>
+</div>

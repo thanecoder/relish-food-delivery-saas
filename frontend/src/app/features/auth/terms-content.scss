@@ -1,0 +1,19 @@
+.terms {
+  line-height: 1.6;
+}
+.updated {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.82rem;
+  margin: 0 0 20px;
+}
+h2 {
+  font-size: 1rem;
+  margin: 22px 0 6px;
+}
+h2:first-of-type {
+  margin-top: 0;
+}
+p {
+  margin: 0;
+  font-size: 0.9rem;
+}

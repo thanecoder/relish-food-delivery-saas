@@ -1,0 +1,42 @@
+<app-customer-header></app-customer-header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <h1>What are you craving?</h1>
+    <p>Order from the restaurants on Relish, delivered to your door.</p>
+  </div>
+</div>
+
+<div class="page">
+  <div class="section-head">
+    <h2>Restaurants near you</h2>
+    @if (!loading()) {
+      <span class="count">{{ restaurants().length }} open now</span>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="center">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+  } @else if (restaurants().length === 0) {
+    <p class="empty">No restaurants are open right now, check back soon.</p>
+  } @else {
+    <div class="grid">
+      @for (r of restaurants(); track r.id) {
+        <button class="tile" (click)="open(r)">
+          <div class="banner" [style.background]="bannerColor(r.id)">
+            <mat-icon>restaurant</mat-icon>
+          </div>
+          <div class="body">
+            <div class="name">{{ r.name }}</div>
+            <div class="tags">{{ r.cuisineTags }}</div>
+            <div class="loc">
+              <mat-icon class="pin">place</mat-icon>{{ r.city }}
+            </div>
+          </div>
+        </button>
+      }
+    </div>
+  }
+</div>

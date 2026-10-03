@@ -1,0 +1,102 @@
+<app-restaurant-admin-header></app-restaurant-admin-header>
+
+@if (loading()) {
+  <div class="center">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+} @else if (restaurant()) {
+  <div class="page">
+    <div class="rest-head">
+      <h1>{{ restaurant()!.name }}</h1>
+      <span class="status" [class]="'s-' + restaurant()!.status.toLowerCase()">{{ restaurant()!.status }}</span>
+    </div>
+    <p class="sub">{{ restaurant()!.cuisineTags }} &middot; {{ restaurant()!.addressLine }}, {{ restaurant()!.city }}</p>
+
+    @for (cat of categories(); track cat.id) {
+      <section class="cat">
+        <div class="cat-head">
+          <h2>{{ cat.name }}</h2>
+          <button mat-button (click)="startAddItem(cat.id)">
+            <mat-icon>add</mat-icon> Add item
+          </button>
+        </div>
+
+        @for (item of cat.items; track item.id) {
+          @if (editingItem() === item.id) {
+            <form class="item-form" [formGroup]="itemForm" (ngSubmit)="saveItemEdit(item.id)">
+              <input formControlName="name" placeholder="Name" />
+              <input formControlName="description" placeholder="Description" />
+              <input formControlName="price" type="number" step="0.01" placeholder="Price" />
+              <label class="veg-check">
+                <input type="checkbox" formControlName="isVeg" /> Vegetarian
+              </label>
+              <div class="form-actions">
+                <button type="button" mat-button (click)="cancelItemEdit()">Cancel</button>
+                <button type="submit" mat-flat-button color="primary" [disabled]="itemForm.invalid || saving()">
+                  Save
+                </button>
+              </div>
+            </form>
+          } @else {
+            <div class="item" [class.unavailable]="!item.isAvailable">
+              <div class="info">
+                <div class="name">
+                  {{ item.name }}
+                  @if (item.isVeg) {
+                    <span class="veg" title="Vegetarian"></span>
+                  }
+                </div>
+                @if (item.description) {
+                  <div class="idesc">{{ item.description }}</div>
+                }
+                <div class="price">&#8377;{{ item.price | number: '1.2-2' }}</div>
+              </div>
+              <div class="actions">
+                <mat-slide-toggle
+                  [checked]="item.isAvailable"
+                  (change)="toggleAvailability(item)"
+                ></mat-slide-toggle>
+                <button mat-icon-button (click)="startEditItem(item)" aria-label="Edit item">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
+        }
+
+        @if (addingItemFor() === cat.id) {
+          <form class="item-form" [formGroup]="itemForm" (ngSubmit)="saveNewItem(cat.id)">
+            <input formControlName="name" placeholder="Name" />
+            <input formControlName="description" placeholder="Description" />
+            <input formControlName="price" type="number" step="0.01" placeholder="Price" />
+            <label class="veg-check">
+              <input type="checkbox" formControlName="isVeg" /> Vegetarian
+            </label>
+            <div class="form-actions">
+              <button type="button" mat-button (click)="cancelItemEdit()">Cancel</button>
+              <button type="submit" mat-flat-button color="primary" [disabled]="itemForm.invalid || saving()">
+                Add item
+              </button>
+            </div>
+          </form>
+        }
+      </section>
+    }
+
+    @if (!addingCategory()) {
+      <button mat-stroked-button class="add-cat" (click)="addingCategory.set(true)">
+        <mat-icon>add</mat-icon> Add category
+      </button>
+    } @else {
+      <form class="cat-form" [formGroup]="categoryForm" (ngSubmit)="saveNewCategory()">
+        <input formControlName="name" placeholder="Category name (e.g. Desserts)" />
+        <div class="form-actions">
+          <button type="button" mat-button (click)="addingCategory.set(false)">Cancel</button>
+          <button type="submit" mat-flat-button color="primary" [disabled]="categoryForm.invalid || saving()">
+            Add category
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+}

@@ -1,0 +1,21 @@
+<header class="bar">
+  <a routerLink="/customer" class="brand">Relish</a>
+
+  <nav class="links">
+    <a routerLink="/customer" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      Restaurants
+    </a>
+    <a routerLink="/customer/orders" routerLinkActive="active">Orders</a>
+  </nav>
+
+  <div class="spacer"></div>
+
+  <a mat-icon-button routerLink="/customer/checkout" aria-label="Cart"
+     [matBadge]="cart.itemCount() || null" matBadgeColor="primary" matBadgeSize="small">
+    <mat-icon>shopping_cart</mat-icon>
+  </a>
+  <a mat-icon-button routerLink="/customer/account" aria-label="Account">
+    <mat-icon>account_circle</mat-icon>
+  </a>
+  <button mat-button (click)="logout()">Log out</button>
+</header>

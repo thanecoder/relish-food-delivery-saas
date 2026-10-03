@@ -1,0 +1,55 @@
+<app-auth-layout>
+  <h1>Enter your code</h1>
+  <p class="sub">We sent a 6-digit code to <strong>{{ email }}</strong></p>
+
+  <div class="otp-boxes" (paste)="onPaste($event)">
+    @for (i of boxIndexes; track i) {
+      <input
+        #box
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="1"
+        class="otp-box"
+        [value]="digits()[i]"
+        (input)="onInput(i, $event)"
+        (keydown)="onKeydown(i, $event)"
+      />
+    }
+  </div>
+
+  @if (errorMsg()) {
+    <p class="error">{{ errorMsg() }}</p>
+  }
+  @if (noticeMsg()) {
+    <p class="notice">{{ noticeMsg() }}</p>
+  }
+
+  <button
+    mat-flat-button
+    color="primary"
+    class="submit"
+    [disabled]="!codeComplete() || loading()"
+    (click)="submit()"
+  >
+    @if (loading()) {
+      <mat-spinner diameter="20"></mat-spinner>
+    } @else {
+      Verify
+    }
+  </button>
+
+  <div class="secondary">
+    <button mat-button class="resend" [disabled]="cooldown() > 0 || resending()" (click)="resend()">
+      @if (cooldown() > 0) {
+        Resend code in {{ cooldown() }}s
+      } @else if (resending()) {
+        Sending...
+      } @else {
+        Didn't get it? Resend code
+      }
+    </button>
+
+    <button mat-button class="back" (click)="backToRequest()">Use a different email</button>
+  </div>
+</app-auth-layout>
