@@ -2,6 +2,7 @@ package com.relish.restaurant;
 
 import com.relish.common.NotFoundException;
 import com.relish.user.User;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,17 @@ class RestaurantServiceImpl implements RestaurantService {
 	public Restaurant updateStatus(UUID id, RestaurantStatus status) {
 		Restaurant restaurant = getById(id);
 		restaurant.setStatus(status);
+		return restaurant;
+	}
+
+	@Override
+	public Restaurant updateProfile(UUID id, String addressLine, String city, LocalTime opensAt,
+			LocalTime closesAt) {
+		Restaurant restaurant = getById(id);
+		restaurant.setAddressLine(addressLine);
+		restaurant.setCity(city);
+		restaurant.setOpensAt(opensAt);
+		restaurant.setClosesAt(closesAt);
 		return restaurant;
 	}
 

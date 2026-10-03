@@ -10,6 +10,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "restaurants")
@@ -36,6 +37,12 @@ public class Restaurant extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 16)
 	private RestaurantStatus status;
+
+	@Column(name = "opens_at")
+	private LocalTime opensAt;
+
+	@Column(name = "closes_at")
+	private LocalTime closesAt;
 
 	protected Restaurant() {
 	}
@@ -98,6 +105,22 @@ public class Restaurant extends BaseEntity {
 
 	public void setStatus(RestaurantStatus status) {
 		this.status = status;
+	}
+
+	public LocalTime getOpensAt() {
+		return opensAt;
+	}
+
+	public void setOpensAt(LocalTime opensAt) {
+		this.opensAt = opensAt;
+	}
+
+	public LocalTime getClosesAt() {
+		return closesAt;
+	}
+
+	public void setClosesAt(LocalTime closesAt) {
+		this.closesAt = closesAt;
 	}
 
 }
