@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-// placing/viewing this way is a customer concept - the restaurant side of an order gets its own
-// endpoints when M5b's order queue is built, not this controller
+// placing/viewing this way is a customer concept - the restaurant side of an order lives in
+// RestaurantOrderController, not here
 @RestController
 @RequestMapping("/api/v1/orders")
 @PreAuthorize("hasRole('CUSTOMER')")

@@ -29,9 +29,33 @@ export interface MenuCategory {
   items: MenuItem[];
 }
 
+export interface QueueOrderItem {
+  menuItemName: string;
+  quantity: number;
+  unitPrice: number;
+  notes: string | null;
+}
+
+export interface QueueOrder {
+  id: string;
+  status: string;
+  subtotal: number;
+  total: number;
+  placedAt: string;
+  items: QueueOrderItem[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class RestaurantAdminApiService {
   constructor(private http: HttpClient) {}
+
+  getOrders() {
+    return this.http.get<QueueOrder[]>('/api/v1/restaurant-admin/orders');
+  }
+
+  updateOrderStatus(id: string, status: string) {
+    return this.http.post<QueueOrder>(`/api/v1/restaurant-admin/orders/${id}/status`, { status });
+  }
 
   getMyRestaurant() {
     return this.http.get<MyRestaurant>('/api/v1/restaurant-admin/restaurant');

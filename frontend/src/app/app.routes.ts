@@ -65,6 +65,12 @@ export const routes: Routes = [
       import('./features/restaurant-admin/restaurant-admin-home').then((m) => m.RestaurantAdminHome),
   },
   {
+    path: 'restaurant-admin/orders',
+    canActivate: [authGuard, activeOnlyGuard],
+    loadComponent: () =>
+      import('./features/restaurant-admin/restaurant-admin-orders').then((m) => m.RestaurantAdminOrders),
+  },
+  {
     path: 'restaurant-admin/account',
     canActivate: [authGuard, activeOnlyGuard],
     loadComponent: () =>

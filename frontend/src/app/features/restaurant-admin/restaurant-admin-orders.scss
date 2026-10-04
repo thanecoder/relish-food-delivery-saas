@@ -1,0 +1,97 @@
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+h1 {
+  margin: 0 0 20px;
+  font-size: 1.6rem;
+}
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+}
+.empty {
+  color: var(--mat-sys-on-surface-variant);
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.card {
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: var(--mat-sys-surface);
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.when {
+  font-size: 0.82rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+.status {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--mat-sys-surface-variant);
+  color: var(--mat-sys-on-surface-variant);
+}
+.status.s-placed {
+  background: color-mix(in srgb, var(--mat-sys-primary) 16%, transparent);
+  color: var(--mat-sys-primary);
+}
+.status.s-delivered {
+  background: color-mix(in srgb, #2e7d32 18%, transparent);
+  color: #2e7d32;
+}
+.status.s-rejected,
+.status.s-cancelled {
+  background: color-mix(in srgb, var(--mat-sys-error) 18%, transparent);
+  color: var(--mat-sys-error);
+}
+.items {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  font-size: 0.92rem;
+}
+.items li {
+  padding: 3px 0;
+}
+.qty {
+  display: inline-block;
+  width: 28px;
+  color: var(--mat-sys-on-surface-variant);
+}
+.notes {
+  margin-left: 8px;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--mat-sys-on-surface-variant);
+}
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.total {
+  font-weight: 600;
+}
+.actions {
+  display: flex;
+  gap: 4px;
+}
+.actions .primary {
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
