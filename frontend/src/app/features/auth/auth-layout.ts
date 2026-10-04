@@ -8,4 +8,14 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './auth-layout.html',
   styleUrl: './auth-layout.scss',
 })
-export class AuthLayout {}
+export class AuthLayout {
+  // food photos behind the welcome text, credits are in CREDITS.md at the repo root
+  photos = [
+    '/images/food/margherita.jpg',
+    '/images/food/masala-dosa.jpg',
+    '/images/food/chicken-tikka.jpg',
+    '/images/food/spaghetti-carbonara.jpg',
+    '/images/food/tiramisu.jpg',
+    '/images/food/classic-smash-burger.jpg',
+  ];
+}

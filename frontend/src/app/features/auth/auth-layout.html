@@ -1,15 +1,20 @@
 <div class="shell">
   <aside class="brand">
+    <div class="mosaic" aria-hidden="true">
+      @for (src of photos; track src) {
+        <img [src]="src" alt="" decoding="async" />
+      }
+    </div>
     <div class="brand-inner">
       <div class="wordmark">Relish</div>
       <p class="tagline">Good food from the kitchens around you, brought over while it's still hot.</p>
 
       <ul class="points">
         <li>
-          <mat-icon>mail</mat-icon>
+          <mat-icon>lunch_dining</mat-icon>
           <div>
-            <strong>No passwords, ever</strong>
-            <span>We email you a six digit code instead.</span>
+            <strong>Something for every craving</strong>
+            <span>Biryani, burgers, dosas, pizza and more, all in one place.</span>
           </div>
         </li>
         <li>
