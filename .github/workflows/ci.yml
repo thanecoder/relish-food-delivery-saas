@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use the example env
+        run: cp .env.example .env
+
+      - name: Backend tests
+        run: docker compose --profile test run --build --rm backend-test
+
+      - name: Frontend build
+        run: docker compose build frontend
