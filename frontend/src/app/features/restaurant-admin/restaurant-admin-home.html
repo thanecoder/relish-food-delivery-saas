@@ -39,6 +39,9 @@
             </form>
           } @else {
             <div class="item" [class.unavailable]="!item.isAvailable">
+              @if (item.imageUrl) {
+                <img class="thumb" [src]="item.imageUrl" [alt]="item.name" loading="lazy" />
+              }
               <div class="info">
                 <div class="name">
                   {{ item.name }}

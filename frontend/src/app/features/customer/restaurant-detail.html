@@ -11,6 +11,10 @@
         <mat-icon>arrow_back</mat-icon> All restaurants
       </button>
 
+      @if (restaurant()!.imageUrl) {
+        <img class="cover" [src]="restaurant()!.imageUrl" [alt]="restaurant()!.name" />
+      }
+
       <h1>{{ restaurant()!.name }}</h1>
       <p class="sub">{{ restaurant()!.cuisineTags }} &middot; {{ restaurant()!.addressLine }}, {{ restaurant()!.city }}</p>
       @if (restaurant()!.description) {
@@ -23,6 +27,9 @@
           <div class="items">
             @for (item of cat.items; track item.id) {
               <div class="item" [class.unavailable]="!item.isAvailable">
+                @if (item.imageUrl) {
+                  <img class="thumb" [src]="item.imageUrl" [alt]="item.name" loading="lazy" />
+                }
                 <div class="info">
                   <div class="name">
                     {{ item.name }}
@@ -36,16 +43,17 @@
                   <div class="price">&#8377;{{ item.price | number: '1.2-2' }}</div>
                 </div>
                 <div class="action">
-                  @if (qtyInCart(item.id) > 0) {
-                    <div class="stepper">
-                      <button mat-icon-button (click)="dec(item)"><mat-icon>remove</mat-icon></button>
-                      <span>{{ qtyInCart(item.id) }}</span>
-                      <button mat-icon-button (click)="add(item)"><mat-icon>add</mat-icon></button>
-                    </div>
-                  } @else {
-                    <button mat-stroked-button [disabled]="!item.isAvailable" (click)="add(item)">
-                      {{ item.isAvailable ? 'Add' : 'Sold out' }}
+                  <div class="stepper">
+                    <button type="button" [disabled]="qtyInCart(item.id) === 0" [attr.aria-label]="'Remove one ' + item.name" (click)="dec(item)">
+                      <mat-icon>remove</mat-icon>
                     </button>
+                    <span class="qty">{{ qtyInCart(item.id) }}</span>
+                    <button type="button" [disabled]="!item.isAvailable" [attr.aria-label]="'Add one ' + item.name" (click)="add(item)">
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </div>
+                  @if (!item.isAvailable) {
+                    <span class="soldout">Sold out</span>
                   }
                 </div>
               </div>

@@ -44,6 +44,9 @@ public class Restaurant extends BaseEntity {
 	@Column(name = "closes_at")
 	private LocalTime closesAt;
 
+	@Column(name = "image_url", length = 500)
+	private String imageUrl;
+
 	protected Restaurant() {
 	}
 
@@ -121,6 +124,10 @@ public class Restaurant extends BaseEntity {
 
 	public void setClosesAt(LocalTime closesAt) {
 		this.closesAt = closesAt;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
 	}
 
 }

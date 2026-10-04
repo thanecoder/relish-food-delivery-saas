@@ -70,6 +70,17 @@ h1 {
 .item.unavailable {
   opacity: 0.55;
 }
+.thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.item .info {
+  flex: 1;
+  min-width: 0;
+}
 .name {
   font-weight: 600;
   display: flex;

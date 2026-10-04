@@ -9,6 +9,7 @@ export interface Restaurant {
   addressLine: string;
   city: string;
   status: string;
+  imageUrl: string | null;
 }
 
 export interface MenuItem {

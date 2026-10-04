@@ -52,6 +52,25 @@ h1 {
 .item.unavailable {
   opacity: 0.55;
 }
+.info {
+  flex: 1;
+  min-width: 0;
+}
+.cover {
+  display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin: 8px 0 4px;
+}
+.thumb {
+  width: 92px;
+  height: 92px;
+  object-fit: cover;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
 .name {
   font-weight: 600;
   display: flex;
@@ -85,16 +104,54 @@ h1 {
 }
 .action {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .stepper {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 2px;
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 999px;
+  height: 38px;
+  background: var(--mat-sys-surface);
 }
-.stepper span {
-  min-width: 20px;
+.stepper button {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--mat-sys-primary);
+  cursor: pointer;
+  padding: 0;
+}
+.stepper button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
+}
+.stepper button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.stepper mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+.qty {
+  min-width: 26px;
   text-align: center;
-  font-weight: 600;
+  font-weight: 700;
+}
+.soldout {
+  display: block;
+  margin-top: 4px;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .cart-col {
@@ -181,6 +238,8 @@ h1 {
 @media (max-width: 900px) {
   .layout {
     flex-direction: column;
+    /* room for the fixed cart bar, otherwise it sits on top of the last dishes */
+    padding-bottom: 100px;
   }
   .cart-col {
     display: none;
