@@ -4,18 +4,19 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../core/auth/auth.service';
+import { Avatar } from '../../core/ui/avatar';
 import { CartService } from './cart.service';
 
 @Component({
   selector: 'app-customer-header',
-  imports: [RouterLink, RouterLinkActive, MatBadgeModule, MatButtonModule, MatIconModule],
+  imports: [RouterLink, RouterLinkActive, MatBadgeModule, MatButtonModule, MatIconModule, Avatar],
   templateUrl: './customer-header.html',
   styleUrl: './customer-header.scss',
 })
 export class CustomerHeader {
   constructor(
     protected cart: CartService,
-    private auth: AuthService,
+    protected auth: AuthService,
     private router: Router,
   ) {}
 

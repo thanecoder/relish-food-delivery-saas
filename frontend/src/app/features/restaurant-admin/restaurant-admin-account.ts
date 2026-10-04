@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AccountProfile, AuthService } from '../../core/auth/auth.service';
+import { Avatar } from '../../core/ui/avatar';
 import { MyRestaurant, RestaurantAdminApiService } from './restaurant-admin-api.service';
 import { RestaurantAdminHeader } from './restaurant-admin-header';
 
 @Component({
   selector: 'app-restaurant-admin-account',
-  imports: [DatePipe, ReactiveFormsModule, MatButtonModule, MatProgressSpinnerModule, RestaurantAdminHeader],
+  imports: [DatePipe, ReactiveFormsModule, MatButtonModule, MatProgressSpinnerModule, Avatar, RestaurantAdminHeader],
   templateUrl: './restaurant-admin-account.html',
   styleUrl: './restaurant-admin-account.scss',
 })

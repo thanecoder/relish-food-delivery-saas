@@ -2,16 +2,17 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../core/auth/auth.service';
+import { Avatar } from '../../core/ui/avatar';
 
 @Component({
   selector: 'app-delivery-header',
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, Avatar],
   templateUrl: './delivery-header.html',
   styleUrl: './delivery-header.scss',
 })
 export class DeliveryHeader {
   constructor(
-    private auth: AuthService,
+    protected auth: AuthService,
     private router: Router,
   ) {}
 

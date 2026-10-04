@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AccountProfile, AuthService } from '../../core/auth/auth.service';
+import { Avatar } from '../../core/ui/avatar';
 import { CustomerHeader } from './customer-header';
 
 const ROLE_LABEL: Record<string, string> = {
@@ -15,7 +16,7 @@ const ROLE_LABEL: Record<string, string> = {
 
 @Component({
   selector: 'app-account',
-  imports: [DatePipe, MatButtonModule, MatProgressSpinnerModule, CustomerHeader],
+  imports: [DatePipe, MatButtonModule, MatProgressSpinnerModule, Avatar, CustomerHeader],
   templateUrl: './account.html',
   styleUrl: './account.scss',
 })

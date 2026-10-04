@@ -8,6 +8,14 @@
       <mat-spinner diameter="32"></mat-spinner>
     </div>
   } @else if (profile()) {
+    <div class="who">
+      <app-avatar [name]="profile()!.name" [size]="64"></app-avatar>
+      <div>
+        <div class="who-name">{{ profile()!.name }}</div>
+        <div class="who-role">{{ roleLabel(profile()!.role) }}</div>
+      </div>
+    </div>
+
     <div class="card">
       <div class="row"><span class="label">Email</span><span>{{ profile()!.email }}</span></div>
       <div class="row"><span class="label">Role</span><span>{{ roleLabel(profile()!.role) }}</span></div>

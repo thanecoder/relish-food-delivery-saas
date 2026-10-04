@@ -1,18 +1,18 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../core/auth/auth.service';
+import { Avatar } from '../../core/ui/avatar';
 
 @Component({
   selector: 'app-restaurant-admin-header',
-  imports: [RouterLink, RouterLinkActive, MatButtonModule, MatIconModule],
+  imports: [RouterLink, RouterLinkActive, MatButtonModule, Avatar],
   templateUrl: './restaurant-admin-header.html',
   styleUrl: './restaurant-admin-header.scss',
 })
 export class RestaurantAdminHeader {
   constructor(
-    private auth: AuthService,
+    protected auth: AuthService,
     private router: Router,
   ) {}
 

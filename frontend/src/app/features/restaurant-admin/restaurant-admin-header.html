@@ -11,7 +11,7 @@
   <div class="spacer"></div>
 
   <a mat-icon-button routerLink="/restaurant-admin/account" aria-label="Account">
-    <mat-icon>account_circle</mat-icon>
+    <app-avatar [name]="auth.user()?.name ?? ''" [size]="32"></app-avatar>
   </a>
   <button mat-button (click)="logout()">Log out</button>
 </header>

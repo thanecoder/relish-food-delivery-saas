@@ -1,0 +1,10 @@
+<span
+  class="avatar"
+  aria-hidden="true"
+  [style.border-radius]="square() ? '12px' : null"
+  [style.width.px]="size()"
+  [style.height.px]="size()"
+  [style.font-size.px]="size() * 0.4"
+  [style.background]="'hsl(' + hue() + ' 45% 38%)'"
+  >{{ initials() }}</span
+>
