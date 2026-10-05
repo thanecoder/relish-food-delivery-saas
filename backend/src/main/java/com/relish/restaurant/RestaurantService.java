@@ -15,6 +15,9 @@ public interface RestaurantService {
 
 	List<Restaurant> listByStatus(RestaurantStatus status);
 
+	// every restaurant whatever its status, platform admin uses this for the approvals screen
+	List<Restaurant> listAll();
+
 	Restaurant apply(User ownerUser, String name, String addressLine, String city);
 
 	Restaurant updateStatus(UUID id, RestaurantStatus status);

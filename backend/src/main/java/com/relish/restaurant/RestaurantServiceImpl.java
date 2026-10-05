@@ -45,6 +45,12 @@ class RestaurantServiceImpl implements RestaurantService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
+	public List<Restaurant> listAll() {
+		return restaurantRepository.findAllByOrderByNameAsc();
+	}
+
+	@Override
 	public Restaurant apply(User ownerUser, String name, String addressLine, String city) {
 		return restaurantRepository.save(new Restaurant(ownerUser, name, addressLine, city));
 	}

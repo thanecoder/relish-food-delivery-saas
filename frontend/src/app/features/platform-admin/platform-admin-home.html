@@ -3,49 +3,140 @@
 <div class="page">
   <h1>Approvals</h1>
 
+  <div class="tabs">
+    <button type="button" [class.on]="tab() === 'restaurants'" (click)="tab.set('restaurants')">
+      Restaurants
+      @if (pendingRestaurants().length > 0) {
+        <span class="count">{{ pendingRestaurants().length }}</span>
+      }
+    </button>
+    <button type="button" [class.on]="tab() === 'accounts'" (click)="tab.set('accounts')">
+      Owners &amp; drivers
+      @if (pendingUsers().length > 0) {
+        <span class="count">{{ pendingUsers().length }}</span>
+      }
+    </button>
+  </div>
+
   @if (loading()) {
     <div class="center">
       <mat-spinner diameter="32"></mat-spinner>
     </div>
-  } @else {
+  } @else if (tab() === 'restaurants') {
     <section class="block">
-      <h2>Restaurants waiting on approval</h2>
-      @if (restaurants().length === 0) {
-        <p class="empty">Nothing pending.</p>
-      } @else {
-        <div class="list">
-          @for (r of restaurants(); track r.id) {
-            <div class="card">
-              <div class="main">
-                <span class="name">{{ r.name }}</span>
-                <span class="sub">{{ r.addressLine }}, {{ r.city }}</span>
-              </div>
-              <button mat-flat-button [disabled]="approving() === r.id" (click)="approveRestaurant(r)">
-                Approve
-              </button>
-            </div>
+      <h2>Waiting for approval <span class="n">{{ pendingRestaurants().length }}</span></h2>
+      @for (r of pendingRestaurants(); track r.id) {
+        <div class="card">
+          @if (r.imageUrl) {
+            <img class="logo" [src]="r.imageUrl" [alt]="r.name" loading="lazy" />
+          } @else {
+            <app-avatar [name]="r.name" [size]="56" [square]="true"></app-avatar>
           }
+          <div class="main">
+            <span class="name">{{ r.name }}</span>
+            <span class="sub">{{ r.cuisineTags }} &middot; {{ r.addressLine }}, {{ r.city }}</span>
+          </div>
+          <div class="actions">
+            <button mat-button [disabled]="busy() === r.id" (click)="rejectRestaurant(r)">Reject</button>
+            <button mat-flat-button [disabled]="busy() === r.id" (click)="approveRestaurant(r)">Approve</button>
+          </div>
         </div>
+      } @empty {
+        <p class="empty">Nothing waiting.</p>
       }
     </section>
 
     <section class="block">
-      <h2>Accounts waiting on approval</h2>
-      @if (users().length === 0) {
-        <p class="empty">Nothing pending.</p>
-      } @else {
-        <div class="list">
-          @for (u of users(); track u.id) {
-            <div class="card">
-              <div class="main">
-                <span class="name">{{ u.name }}</span>
-                <span class="sub">{{ u.email }} &middot; {{ u.role }}</span>
-              </div>
-              <button mat-flat-button [disabled]="approving() === u.id" (click)="approveUser(u)">Approve</button>
-            </div>
+      <h2>Approved <span class="n">{{ approvedRestaurants().length }}</span></h2>
+      @for (r of approvedRestaurants(); track r.id) {
+        <div class="card">
+          @if (r.imageUrl) {
+            <img class="logo" [src]="r.imageUrl" [alt]="r.name" loading="lazy" />
+          } @else {
+            <app-avatar [name]="r.name" [size]="56" [square]="true"></app-avatar>
           }
+          <div class="main">
+            <span class="name">{{ r.name }}</span>
+            <span class="sub">{{ r.cuisineTags }} &middot; {{ r.addressLine }}, {{ r.city }}</span>
+          </div>
+          <span class="chip s-approved">{{ statusLabel(r.status) }}</span>
         </div>
       }
     </section>
+
+    @if (closedRestaurants().length > 0) {
+      <section class="block">
+        <h2>Rejected <span class="n">{{ closedRestaurants().length }}</span></h2>
+        @for (r of closedRestaurants(); track r.id) {
+          <div class="card">
+            @if (r.imageUrl) {
+              <img class="logo" [src]="r.imageUrl" [alt]="r.name" loading="lazy" />
+            } @else {
+              <app-avatar [name]="r.name" [size]="56" [square]="true"></app-avatar>
+            }
+            <div class="main">
+              <span class="name">{{ r.name }}</span>
+              <span class="sub">{{ r.cuisineTags }} &middot; {{ r.addressLine }}, {{ r.city }}</span>
+            </div>
+            <span class="chip s-rejected">{{ statusLabel(r.status) }}</span>
+            @if (r.status === 'REJECTED') {
+              <button mat-button [disabled]="busy() === r.id" (click)="approveRestaurant(r)">Approve</button>
+            }
+          </div>
+        }
+      </section>
+    }
+  } @else {
+    <section class="block">
+      <h2>Waiting for approval <span class="n">{{ pendingUsers().length }}</span></h2>
+      @for (u of pendingUsers(); track u.id) {
+        <div class="card">
+          <app-avatar [name]="u.name" [size]="48"></app-avatar>
+          <div class="main">
+            <span class="name">{{ u.name }}</span>
+            <span class="sub">{{ u.email }} &middot; {{ roleLabel(u.role) }}</span>
+          </div>
+          <div class="actions">
+            <button mat-button [disabled]="busy() === u.id" (click)="rejectUser(u)">Reject</button>
+            <button mat-flat-button [disabled]="busy() === u.id" (click)="approveUser(u)">Approve</button>
+          </div>
+        </div>
+      } @empty {
+        <p class="empty">Nothing waiting.</p>
+      }
+    </section>
+
+    <section class="block">
+      <h2>Approved <span class="n">{{ approvedUsers().length }}</span></h2>
+      @for (u of approvedUsers(); track u.id) {
+        <div class="card">
+          <app-avatar [name]="u.name" [size]="48"></app-avatar>
+          <div class="main">
+            <span class="name">{{ u.name }}</span>
+            <span class="sub">{{ u.email }} &middot; {{ roleLabel(u.role) }}</span>
+          </div>
+          <span class="chip s-approved">{{ statusLabel(u.status) }}</span>
+        </div>
+      }
+    </section>
+
+    @if (closedUsers().length > 0) {
+      <section class="block">
+        <h2>Rejected <span class="n">{{ closedUsers().length }}</span></h2>
+        @for (u of closedUsers(); track u.id) {
+          <div class="card">
+            <app-avatar [name]="u.name" [size]="48"></app-avatar>
+            <div class="main">
+              <span class="name">{{ u.name }}</span>
+              <span class="sub">{{ u.email }} &middot; {{ roleLabel(u.role) }}</span>
+            </div>
+            <span class="chip s-rejected">{{ statusLabel(u.status) }}</span>
+            @if (u.status === 'REJECTED') {
+              <button mat-button [disabled]="busy() === u.id" (click)="approveUser(u)">Approve</button>
+            }
+          </div>
+        }
+      </section>
+    }
   }
 </div>

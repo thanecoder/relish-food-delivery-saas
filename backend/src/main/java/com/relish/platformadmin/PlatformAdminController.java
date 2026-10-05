@@ -1,8 +1,9 @@
 package com.relish.platformadmin;
 
+import com.relish.common.ConflictException;
 import com.relish.restaurant.RestaurantService;
 import com.relish.restaurant.RestaurantStatus;
-import com.relish.user.User;
+import com.relish.user.Role;
 import com.relish.user.UserService;
 import com.relish.user.UserStatus;
 import java.util.List;
@@ -14,12 +15,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-// approval queue for the two roles that don't self-activate - restaurants and delivery partners
-// both sit in PENDING until a platform admin looks at them, see UserStatus/RestaurantStatus
+// approval queue for the two roles that don't self-activate - restaurants and the accounts behind
+// restaurants / delivery. the lists carry every status so the screen can show history too
 @RestController
 @RequestMapping("/api/v1/platform-admin")
 @PreAuthorize("hasRole('PLATFORM_ADMIN')")
 class PlatformAdminController {
+
+	// customers and the admins themselves never go through approval
+	private static final List<Role> REVIEWED_ROLES = List.of(Role.RESTAURANT_ADMIN, Role.DELIVERY_PARTNER);
 
 	private final RestaurantService restaurantService;
 	private final UserService userService;
@@ -29,26 +33,46 @@ class PlatformAdminController {
 		this.userService = userService;
 	}
 
-	@GetMapping("/restaurants/pending")
-	List<PendingRestaurantResponse> pendingRestaurants() {
-		return restaurantService.listByStatus(RestaurantStatus.PENDING).stream()
-			.map(PendingRestaurantResponse::from).toList();
+	@GetMapping("/restaurants")
+	List<AdminRestaurantResponse> restaurants() {
+		return restaurantService.listAll().stream().map(AdminRestaurantResponse::from).toList();
 	}
 
 	@PostMapping("/restaurants/{id}/approve")
-	PendingRestaurantResponse approveRestaurant(@PathVariable UUID id) {
-		return PendingRestaurantResponse.from(restaurantService.updateStatus(id, RestaurantStatus.APPROVED));
+	AdminRestaurantResponse approveRestaurant(@PathVariable UUID id) {
+		if (restaurantService.getById(id).getStatus() == RestaurantStatus.APPROVED) {
+			throw new ConflictException("This restaurant is already approved.");
+		}
+		return AdminRestaurantResponse.from(restaurantService.updateStatus(id, RestaurantStatus.APPROVED));
 	}
 
-	@GetMapping("/users/pending")
-	List<PendingUserResponse> pendingUsers() {
-		return userService.listByStatus(UserStatus.PENDING).stream().map(PendingUserResponse::from).toList();
+	@PostMapping("/restaurants/{id}/reject")
+	AdminRestaurantResponse rejectRestaurant(@PathVariable UUID id) {
+		if (restaurantService.getById(id).getStatus() != RestaurantStatus.PENDING) {
+			throw new ConflictException("Only a restaurant waiting for approval can be rejected.");
+		}
+		return AdminRestaurantResponse.from(restaurantService.updateStatus(id, RestaurantStatus.REJECTED));
+	}
+
+	@GetMapping("/users")
+	List<AdminUserResponse> users() {
+		return userService.listByRoles(REVIEWED_ROLES).stream().map(AdminUserResponse::from).toList();
 	}
 
 	@PostMapping("/users/{id}/approve")
-	PendingUserResponse approveUser(@PathVariable UUID id) {
-		User user = userService.updateStatus(id, UserStatus.ACTIVE);
-		return PendingUserResponse.from(user);
+	AdminUserResponse approveUser(@PathVariable UUID id) {
+		if (userService.getById(id).getStatus() == UserStatus.ACTIVE) {
+			throw new ConflictException("This account is already active.");
+		}
+		return AdminUserResponse.from(userService.updateStatus(id, UserStatus.ACTIVE));
+	}
+
+	@PostMapping("/users/{id}/reject")
+	AdminUserResponse rejectUser(@PathVariable UUID id) {
+		if (userService.getById(id).getStatus() != UserStatus.PENDING) {
+			throw new ConflictException("Only an account waiting for approval can be rejected.");
+		}
+		return AdminUserResponse.from(userService.updateStatus(id, UserStatus.REJECTED));
 	}
 
 }

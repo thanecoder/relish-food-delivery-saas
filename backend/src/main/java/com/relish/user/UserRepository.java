@@ -1,5 +1,6 @@
 package com.relish.user;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -11,6 +12,6 @@ interface UserRepository extends JpaRepository<User, UUID> {
 
 	List<User> findByRoleAndStatus(Role role, UserStatus status);
 
-	List<User> findByStatus(UserStatus status);
+	List<User> findByRoleInOrderByNameAsc(Collection<Role> roles);
 
 }

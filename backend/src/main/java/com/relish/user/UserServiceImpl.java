@@ -2,6 +2,7 @@ package com.relish.user;
 
 import com.relish.common.NotFoundException;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,8 +52,8 @@ class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<User> listByStatus(UserStatus status) {
-		return userRepository.findByStatus(status);
+	public List<User> listByRoles(Collection<Role> roles) {
+		return userRepository.findByRoleInOrderByNameAsc(roles);
 	}
 
 	@Override

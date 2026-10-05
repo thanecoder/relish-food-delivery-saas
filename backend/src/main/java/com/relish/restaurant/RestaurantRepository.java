@@ -11,4 +11,6 @@ interface RestaurantRepository extends JpaRepository<Restaurant, UUID> {
 
 	List<Restaurant> findByStatus(RestaurantStatus status);
 
+	List<Restaurant> findAllByOrderByNameAsc();
+
 }

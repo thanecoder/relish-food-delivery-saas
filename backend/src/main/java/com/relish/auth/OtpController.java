@@ -65,7 +65,7 @@ class OtpController {
 		}
 
 		User user = existing.get();
-		requireNotSuspended(user);
+		requireLoginAllowed(user);
 		return asOutcome(newSession(user));
 	}
 
@@ -77,7 +77,7 @@ class OtpController {
 		// a double click or a second tab would otherwise replay the token straight into a unique key violation
 		User user = userService.findByEmail(email)
 			.orElseGet(() -> userService.createCustomer(email, Instant.now()));
-		requireNotSuspended(user);
+		requireLoginAllowed(user);
 		return newSession(user);
 	}
 
@@ -88,7 +88,7 @@ class OtpController {
 		}
 		Jwt jwt = jwtService.decodeRefreshToken(refreshCookie);
 		User user = userService.getById(UUID.fromString(jwt.getSubject()));
-		requireNotSuspended(user);
+		requireLoginAllowed(user);
 		return newSession(user);
 	}
 
@@ -106,9 +106,12 @@ class OtpController {
 		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cleared.toString()).build();
 	}
 
-	private void requireNotSuspended(User user) {
+	private void requireLoginAllowed(User user) {
 		if (user.getStatus() == UserStatus.SUSPENDED) {
 			throw new ForbiddenException("This account has been suspended. Get in touch with support.");
+		}
+		if (user.getStatus() == UserStatus.REJECTED) {
+			throw new ForbiddenException("This application was not approved. Get in touch with support.");
 		}
 	}
 
