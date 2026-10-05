@@ -39,6 +39,21 @@
 }
 
 @media (max-width: 600px) {
+  .bar {
+    padding: 8px;
+    gap: 0;
+  }
+  .bar button {
+    white-space: nowrap;
+    min-width: 0;
+    padding: 0 8px;
+  }
+  .bar a[mat-icon-button] {
+    --mat-icon-button-state-layer-size: 40px;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+  }
   .brand {
     margin-right: 12px;
   }
