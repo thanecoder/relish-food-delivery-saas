@@ -31,3 +31,10 @@ body {
   margin: 0;
   height: 100%;
 }
+
+/* wrapped headings were drawing on top of themselves on phones */
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+}

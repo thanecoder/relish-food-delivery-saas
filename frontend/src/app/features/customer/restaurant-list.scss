@@ -108,3 +108,12 @@
   height: 15px;
   margin-right: 3px;
 }
+
+@media (max-width: 600px) {
+  .hero {
+    padding: 36px 20px;
+  }
+  .hero h1 {
+    font-size: 1.75rem;
+  }
+}
