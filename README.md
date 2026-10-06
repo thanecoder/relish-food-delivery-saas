@@ -28,14 +28,21 @@ Admin approving restaurants
 
 ![Admin](frontend/public/screenshots/13-admin-restaurants.jpg)
 
-Login, and a couple of phone screens
+Login
 
 ![Login](frontend/public/screenshots/01-login.jpg)
 
-<p>
-  <img src="frontend/public/screenshots/mobile-02-restaurants.jpg" width="260" alt="Restaurants on a phone">
-  <img src="frontend/public/screenshots/mobile-03-menu.jpg" width="260" alt="Menu on a phone">
-</p>
+On a phone
+
+<table>
+  <tr>
+    <td><img src="frontend/public/screenshots/mobile-01-login.jpg" width="100%" alt="login on a phone"></td>
+    <td><img src="frontend/public/screenshots/mobile-02-restaurants.jpg" width="100%" alt="restaurants on a phone"></td>
+    <td><img src="frontend/public/screenshots/mobile-03-menu.jpg" width="100%" alt="menu on a phone"></td>
+    <td><img src="frontend/public/screenshots/mobile-04-orders.jpg" width="100%" alt="orders on a phone"></td>
+    <td><img src="frontend/public/screenshots/mobile-05-admin.jpg" width="100%" alt="admin on a phone"></td>
+  </tr>
+</table>
 
 ## Requirements
 
@@ -52,23 +59,11 @@ docker compose up
 
 Once it is up, open the frontend in your browser. The ports are in `docker-compose.yml` if you need to change them.
 
-## Logging in
-
-Login is an emailed code, any email works and signs you up as a customer. No email goes out unless you set up SMTP in `.env`, the code just gets printed in the backend log:
-
-```bash
-docker compose logs backend | grep "OTP for"
-```
-
 ## Tests
 
 ```bash
 docker compose --profile test run --rm backend-test
 ```
-
-## Status
-
-All four roles work end to end. Customers order, restaurants run the order queue, riders deliver, and an admin approves new restaurants and accounts. Still to do: a map picker for delivery addresses, and payments.
 
 ## License
 
