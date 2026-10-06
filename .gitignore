@@ -4,6 +4,18 @@ docs/
 # Local dev tooling — not part of the tracked repo history
 scripts/
 
+# AI coding-assistant config/state — local-only, never tracked
+.claude/
+CLAUDE.md
+.cursor/
+.cursorrules
+.windsurfrules
+.clinerules/
+.roo/
+.continue/
+.aider*
+.github/copilot-instructions.md
+
 # Environment
 .env
 
