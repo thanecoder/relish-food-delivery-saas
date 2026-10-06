@@ -52,22 +52,13 @@ docker compose up
 
 Once it is up, open the frontend in your browser. The ports are in `docker-compose.yml` if you need to change them.
 
-## Demo accounts
+## Logging in
 
-There's seed data, so you can log in right away. Login is an emailed code, but no email goes out unless you set up SMTP in `.env`, the code just gets printed in the backend log:
+Login is an emailed code, any email works and signs you up as a customer. No email goes out unless you set up SMTP in `.env`, the code just gets printed in the backend log:
 
 ```bash
 docker compose logs backend | grep "OTP for"
 ```
-
-| Role | Email |
-|---|---|
-| Customer | demo@relish.local |
-| Restaurant owner | owner@bellacucina.relish.local (every restaurant has an `owner@<name>.relish.local`) |
-| Delivery partner | rider@relish.local |
-| Platform admin | admin@relish.local |
-
-Any other email signs up as a new customer.
 
 ## Tests
 
