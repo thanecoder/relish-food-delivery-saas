@@ -4,33 +4,10 @@ Small food delivery app, Angular + Spring Boot, OTP login (no passwords). Built 
 
 ## Screenshots
 
-Restaurant list
-
-![Restaurants](frontend/public/screenshots/02-restaurants.jpg)
-
-Menu and cart
-
-![Menu and cart](frontend/public/screenshots/03-menu-and-cart.jpg)
-
-The restaurant sees the order come in
-
-![Restaurant orders](frontend/public/screenshots/06-restaurant-queue.jpg)
-
-Rider app
-
-![Rider](frontend/public/screenshots/09-rider-assigned.jpg)
-
-Order tracking for the customer
-
-![Order tracking](frontend/public/screenshots/11-order-delivered.jpg)
-
-Admin approving restaurants
-
-![Admin](frontend/public/screenshots/13-admin-restaurants.jpg)
-
-Login
-
-![Login](frontend/public/screenshots/01-login.jpg)
+<p>
+  <img src="frontend/public/screenshots/relish-mobile.gif" height="380" alt="Ordering on a phone">
+  <img src="frontend/public/screenshots/relish-desktop.gif" height="380" alt="Desktop screens">
+</p>
 
 On a phone
 
