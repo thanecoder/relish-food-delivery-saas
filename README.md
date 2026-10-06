@@ -50,8 +50,7 @@ cp .env.example .env
 docker compose up
 ```
 
-- Frontend: http://localhost:4201
-- Backend: http://localhost:8081
+Once it is up, open the frontend in your browser. The ports are in `docker-compose.yml` if you need to change them.
 
 ## Demo accounts
 
