@@ -1,5 +1,7 @@
 # Relish
 
+[![CI](https://github.com/thanecoder/relish-food-delivery-saas/actions/workflows/ci.yml/badge.svg)](https://github.com/thanecoder/relish-food-delivery-saas/actions/workflows/ci.yml)
+
 Small food delivery app, Angular + Spring Boot, OTP login (no passwords). Built to run entirely in Docker, not meant for production scale, just a demo/exhibition project.
 
 ## Screenshots
@@ -28,7 +30,7 @@ Just Docker (Desktop or Engine + compose plugin). No local Node, JDK, Maven or P
 ## Quickstart
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/thanecoder/relish-food-delivery-saas.git
 cd food-delivery-saas
 cp .env.example .env
 docker compose up
