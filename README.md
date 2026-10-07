@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/thanecoder/relish-food-delivery-saas/actions/workflows/ci.yml/badge.svg)](https://github.com/thanecoder/relish-food-delivery-saas/actions/workflows/ci.yml)
 
-Small food delivery app, Angular + Spring Boot, OTP login (no passwords). Built to run entirely in Docker, not meant for production scale, just a demo/exhibition project.
+Food delivery app built with Angular and Spring Boot. Customers order, restaurants run the queue, riders deliver and an admin approves new restaurants, all behind OTP login (no passwords). Everything runs in Docker.
 
 ## Screenshots
 
