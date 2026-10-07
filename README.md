@@ -19,7 +19,7 @@ Just Docker (Desktop or Engine + compose plugin). No local Node, JDK, Maven or P
 
 ```bash
 git clone https://github.com/thanecoder/relish-food-delivery-saas.git
-cd food-delivery-saas
+cd relish-food-delivery-saas
 cp .env.example .env
 docker compose up
 ```
