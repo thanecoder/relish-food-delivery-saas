@@ -40,6 +40,10 @@ docker compose up
 
 Once it is up, open the frontend in your browser. The ports are in `docker-compose.yml` if you need to change them.
 
+## Monitoring
+
+The frontend can report errors, page loads and web vitals to Grafana through the Faro Web SDK. It is off by default and sends nothing. To turn it on, set `FARO_URL` in `.env` to your collector's address and run `docker compose up -d frontend`. URLs are stripped of query strings and ids first, and only the user's role is attached to a session.
+
 ## Tests
 
 ```bash

@@ -1,0 +1,4 @@
+window.__RELISH__ = {
+  faroUrl: "${FARO_URL}",
+  environment: "${FARO_ENVIRONMENT}"
+};

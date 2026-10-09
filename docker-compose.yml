@@ -46,6 +46,9 @@ services:
       context: ./frontend
     depends_on:
       - backend
+    environment:
+      FARO_URL: ${FARO_URL:-}
+      FARO_ENVIRONMENT: ${FARO_ENVIRONMENT:-local}
     ports:
       - "4201:80"
 
